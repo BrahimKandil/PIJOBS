@@ -1,0 +1,11 @@
+Django
+pymupdf
+python-docx
+easyocr
+pdf2image
+torch
+torchvision
+numpy
+pandas
+scikit-learn
+spacy

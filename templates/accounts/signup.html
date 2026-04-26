@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Signup</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #eef2f7;
+        }
+
+        .container {
+            width: 600px;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .step { display: none; }
+        .step.active { display: block; }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 6px 0;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #007bff;
+            color: white;
+            border: none;
+            margin-top: 10px;
+        }
+
+        button:hover { background: #0056b3; }
+
+        .progress {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #ddd;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .circle.active {
+            background: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Inscription</h2>
+
+    <!-- PROGRESS -->
+    <div class="progress">
+        <div class="circle active">1</div>
+        <div class="circle">2</div>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- STEP 1 -->
+        <div class="step active" id="step1">
+
+            <select name="role" id="role" onchange="toggleRole()">
+                <option value="">Role</option>
+                <option value="RH">Recruiter</option>
+                <option value="CANDIDATE">Candidate</option>
+            </select>
+
+            <input type="text" name="username" placeholder="Username">
+            <input type="text" name="cin" placeholder="CIN">
+            <input type="text" name="real_name" placeholder="Real Name">
+            <input type="email" name="email" placeholder="Email">
+            <input type="password" name="password" placeholder="Password">
+
+            <button type="button" onclick="nextStep()">Next</button>
+        </div>
+
+        <!-- STEP 2 RH -->
+        <div class="step" id="stepRH">
+
+            <h3>Company Info</h3>
+
+            <input type="text" name="company_name" placeholder="Company Name">
+            <input type="text" name="sector" placeholder="Sector">
+            <input type="text" name="phone" placeholder="Phone">
+            <input type="text" name="address" placeholder="Address">
+            <input type="text" name="location" placeholder="Location">
+            <input type="number" name="number_of_employees" placeholder="Number of Employees">
+            <input type="text" name="domains" placeholder="Domains">
+            <input type="text" name="expertise" placeholder="Expertise">
+            <textarea name="description" placeholder="Description"></textarea>
+
+            <button type="submit">Finish</button>
+        </div>
+
+        <!-- STEP 2 CANDIDATE -->
+        <div class="step" id="stepCAND">
+
+            <h3>Candidate Info</h3>
+
+            <input type="text" name="skills" placeholder="Skills (comma separated)">
+            <input type="text" name="experience" placeholder="Experience">
+            <input type="text" name="education" placeholder="Education">
+            <input type="text" name="phone" placeholder="Phone">
+            <input type="date" name="birth_date">
+
+            <label>CV</label>
+            <input type="file" name="cv">
+
+            <label>Motivation Letter</label>
+            <input type="file" name="motivation_letter">
+
+            <textarea name="description" placeholder="Description"></textarea>
+
+            <button type="submit">Finish</button>
+        </div>
+
+    </form>
+
+</div>
+
+<script>
+    function nextStep() {
+        let role = document.getElementById("role").value;
+
+        if (!role) {
+            alert("Select role");
+            return;
+        }
+
+        document.getElementById("step1").classList.remove("active");
+
+        if (role === "RH") {
+            document.getElementById("stepRH").classList.add("active");
+        } else {
+            document.getElementById("stepCAND").classList.add("active");
+        }
+    }
+</script>
+
+</body>
+</html>

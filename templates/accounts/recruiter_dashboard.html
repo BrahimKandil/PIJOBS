@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recruiter Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial;
+            background: #f0f2f5;
+        }
+
+        /* TOP BANNER */
+        .header {
+            background: #1877f2;
+            color: white;
+            padding: 20px;
+        }
+
+        .header h1 {
+            margin: 0;
+        }
+
+        .create-btn {
+            background: white;
+            color: #1877f2;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* LAYOUT */
+        .container {
+            display: flex;
+        }
+
+        /* LEFT PANEL */
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 20px;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+        }
+
+        .metric {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 8px;
+        }
+
+        /* MAIN FEED */
+        .feed {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .post {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
+
+        .post h3 {
+            margin: 0;
+        }
+
+        .skills {
+            color: rgb(128, 128, 128);
+            font-size: 12px;
+        }
+
+        .floating {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1877f2;
+            color: white;
+            border-radius: 50%;
+            padding: 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Recruiter Dashboard</h1>
+    <button class="create-btn">+ Create Post</button>
+</div>
+
+<div class="container">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <div class="metric">Total Posts: {{ total_posts }}</div>
+        <div class="metric">Active Posts: {{ active_posts }}</div>
+        <div class="metric">Applications: 0</div>
+        <div class="metric">Avg/Post: 0</div>
+    </div>
+
+    <!-- MAIN FEED -->
+    <div class="feed">
+
+        {% for post in posts %}
+        <div class="post">
+            <h3>{{ post.title }}</h3>
+            <p><b>{{ post.company }}</b> - {{ post.domain }}</p>
+            <p>{{ post.description }}</p>
+            <p class="skills">{{ post.skills }}</p>
+            <small>{{ post.created_at }}</small>
+        </div>
+        {% endfor %}
+
+    </div>
+</div>
+
+<div class="floating">+</div>
+
+</body>
+</html>
