@@ -2,7 +2,11 @@ import sys
 import subprocess
 import pandas as pd
 import pickle
-
+import os
+import torch as torch
+import psutil
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print("🔥 Using device:", device)
 # ----------------------------
 # AUTO INSTALL DEPENDENCIES
 # ----------------------------
@@ -18,6 +22,8 @@ def install_if_missing(package, import_name=None):
 
 
 install_if_missing("sentence-transformers", "sentence_transformers")
+install_if_missing("torch", "torch")
+install_if_missing("psutil", "psutil")
 
 
 from sentence_transformers import SentenceTransformer
@@ -42,7 +48,7 @@ def train_recommender(fileName):
     # ----------------------------
     # 2. LOAD DEEP LEARNING MODEL
     # ----------------------------
-    model = SentenceTransformer("all-MiniLM-L6-v2")
+    model = SentenceTransformer("all-MiniLM-L6-v2",device=device)
 
     # ----------------------------
     # 3. CREATE EMBEDDINGS
