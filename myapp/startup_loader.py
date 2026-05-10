@@ -4,11 +4,21 @@ import os
 
 def export_datawarehouse_to_csv():
     try:
+        # conn = pyodbc.connect(
+        #     "DRIVER={ODBC Driver 17 for SQL Server};"
+        #     "SERVER=localhost\SQLEXPRESS;"
+        #     "DATABASE=PI_JoBs;"
+        #     "Trusted_Connection=yes;"
+        # )
         conn = pyodbc.connect(
             "DRIVER={ODBC Driver 17 for SQL Server};"
-            "SERVER=localhost\SQLEXPRESS;"
+            "SERVER=3alinfo-equipepicosoft.database.windows.net;"
             "DATABASE=PI_JoBs;"
-            "Trusted_Connection=yes;"
+            "UID=brahim;"
+            "PWD=PicoSoft123;"
+            "Encrypt=yes;"
+            "TrustServerCertificate=no;"
+            "Connection Timeout=30;"
         )
 
         query = """

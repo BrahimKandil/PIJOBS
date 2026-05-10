@@ -3,10 +3,8 @@ import subprocess
 import pandas as pd
 import pickle
 import os
-import torch as torch
-import psutil
-device = "cuda" if torch.cuda.is_available() else "cpu"
-print("🔥 Using device:", device)
+
+
 # ----------------------------
 # AUTO INSTALL DEPENDENCIES
 # ----------------------------
@@ -27,6 +25,11 @@ install_if_missing("psutil", "psutil")
 
 
 from sentence_transformers import SentenceTransformer
+import torch as torch
+import psutil
+
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print("🔥 Using device:", device)
 
 def train_recommender(fileName):
     df = pd.read_csv(fileName)

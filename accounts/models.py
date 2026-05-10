@@ -64,3 +64,49 @@ class RecruitmentPost(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     is_active = models.BooleanField(default=True)
+class Candidature(models.Model):
+
+    SITUATION_CHOICES = (
+        ("accepted", "Accepted"),
+        ("rejected", "Rejected"),
+    )
+
+    candidate = models.ForeignKey(
+        CandidateProfile,
+        on_delete=models.CASCADE,
+        related_name="candidatures"
+    )
+
+    post = models.ForeignKey(
+        RecruitmentPost,
+        on_delete=models.CASCADE,
+        related_name="candidatures"
+    )
+
+    date_of_post = models.DateTimeField(auto_now_add=True)
+
+    situation = models.CharField(
+        max_length=20,
+        choices=SITUATION_CHOICES,
+        default="accepted"
+    )
+
+    imported = models.BooleanField(default=False)
+
+    cv_file = models.TextField()
+
+    extracted_cv_content = models.TextField(
+        null=True,
+        blank=True
+    )
+
+    motivation_letter = models.TextField(
+        null=True,
+        blank=True
+    )
+
+    class Meta:
+        unique_together = ("candidate", "post")
+
+    def __str__(self):
+        return f"{self.candidate.user.username} -> {self.post.title}"

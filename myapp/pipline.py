@@ -5,13 +5,14 @@ import traceback
 from IAmodelsApps.clustring_acc_candidtats import train_clustering
 from IAmodelsApps.cv_match import train_cv_model
 from IAmodelsApps.recommendation_system import train_recommender
-from IAmodelsApps.salary_prediction import train_salary_model
+from IAmodelsApps.salary_prediction import train_salary_models
 from myapp.errorIAlogs import log_error
 from myapp.startup_loader import export_datawarehouse_to_csv
+from myapp.succesIAlogs import log_all_models_status
 
 MODEL_PATHS = {
     "recommender": "ml_models/recommender.pkl",
-    "cv_model": "ml_models/cv_model.pkl",
+    "cv_model": "ml_models/cv_matching_model.pkl",
     "clustering": "ml_models/clustering.pkl",
     "salary": "ml_models/salary_model.pkl"
 }
@@ -86,7 +87,7 @@ def run_pipeline():
                 print("💰 Salary model already exists → skipping training")
             else:
                 print("💰 Training salary model...")
-                train_salary_model(fileName)
+                train_salary_models(fileName)
                 print("✅ Salary model done")
         except Exception as e:
             print("⚠️ Salary model failed:", e)
@@ -94,6 +95,7 @@ def run_pipeline():
             traceback.print_exc()
 
         print("🎉 Pipeline finished")
+        log_all_models_status()
 
     except Exception as e:
         print("❌ Critical failure (CSV stage):", e)

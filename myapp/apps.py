@@ -11,3 +11,5 @@ class MyappConfig(AppConfig):
         if "runserver" in sys.argv and os.environ.get("RUN_MAIN") == "true":
             from .pipline import run_pipeline
             run_pipeline()
+            from .cron import start_scheduler
+            start_scheduler()

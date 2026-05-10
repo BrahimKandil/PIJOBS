@@ -54,6 +54,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+# CRONJOBS = [
+#     ('*/2 * * * *', 'myapp.cron.run_daily_etl'),
+# ]
 
 ROOT_URLCONF = 'config.urls'
 
