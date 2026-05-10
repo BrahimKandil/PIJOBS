@@ -227,7 +227,7 @@ def start_scheduler():
     scheduler.add_job(
         run_daily_etl,
         'interval',
-        minutes=2
+        minutes=5
     )
 
     scheduler.start()
