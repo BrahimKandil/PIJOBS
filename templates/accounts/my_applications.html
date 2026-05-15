@@ -1,0 +1,55 @@
+{% extends 'accounts/base.html' %}
+{% block title %}Mes candidatures{% endblock %}
+{% block content %}
+<div class="container py-5">
+  <h2>Mes candidatures</h2>
+
+  <h4 class="mt-4">✅ En cours / acceptées</h4>
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>#</th><th>Poste</th><th>Entreprise</th>
+        <th>Date</th><th>Statut</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for c in accepted %}
+      <tr>
+        <td>{{ c.id }}</td>
+        <td>{{ c.post.title }}</td>
+        <td>{{ c.post.company_name }}</td>
+        <td>{{ c.date_of_post|date:"d/m/Y H:i" }}</td>
+        <td>
+          {% if c.situation == 'accepted' %}
+            <span class="badge bg-success">Acceptée</span>
+          {% else %}
+            <span class="badge bg-warning text-dark">En attente</span>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5" class="text-center text-muted">Aucune candidature.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-5">❌ Refusées (sans ID séquentiel)</h4>
+  <table class="table">
+    <thead>
+      <tr><th>Réf.</th><th>Poste</th><th>Date</th><th>Motif</th></tr>
+    </thead>
+    <tbody>
+    {% for r in rejected %}
+      <tr>
+        <td><code>{{ r.ref|slice:":10" }}…</code></td>
+        <td>{{ r.post.title }}</td>
+        <td>{{ r.rejected_at|date:"d/m/Y H:i" }}</td>
+        <td>{{ r.rejection_reason|default:"—" }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4" class="text-center text-muted">Aucun refus.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
