@@ -1,75 +1,83 @@
-{% extends 'accounts/base.html' %}
-{% block title %}Candidatures — {{ post.title }}{% endblock %}
+{% extends "accounts/base.html" %}
+
 {% block content %}
-<div class="container py-5">
-  <h2>Candidatures pour : {{ post.title }}</h2>
-  <p class="text-muted">{{ post.company_name }} — {{ post.domain }}</p>
+<h2>Candidatures reçues pour : {{ post.title }}</h2>
 
-  <h4 class="mt-4">📥 Reçues / acceptées</h4>
-  <table class="table table-hover align-middle">
-    <thead>
-      <tr>
-        <th>ID</th><th>Candidat</th><th>Email</th>
-        <th>Exp.</th><th>Statut</th><th>CV</th><th>Actions</th>
-      </tr>
-    </thead>
-    <tbody>
-    {% for c in pending %}
-      <tr>
-        <td>{{ c.id }}</td>
-        <td>{{ c.full_name|default:c.candidate.user.username }}</td>
-        <td>{{ c.email }}</td>
-        <td>{{ c.years_of_experience|default:"-" }} an(s)</td>
+<h3>Candidatures en attente / triées par pertinence</h3>
+<table>
+    <tr>
+        <th>Candidat</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+        <th>Expérience</th>
+        <th>Score IA</th>
+        <th>Suggestion IA</th>
+        <th>Source</th>
+        <th>Actions</th>
+    </tr>
+    {% for item in pending %}
+    <tr>
+        <td>{{ item.full_name|default:item.candidate.user.real_name }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.phone }}</td>
+        <td>{{ item.years_of_experience|default:"-" }}</td>
+        <td class="score-box">{{ item.ai_score|default:"-" }}</td>
         <td>
-          {% if c.situation == 'accepted' %}
-            <span class="badge bg-success">Acceptée</span>
-          {% else %}
-            <span class="badge bg-warning text-dark">En attente</span>
-          {% endif %}
+            {% if item.ai_recommendation == "recommend_accept" %}
+                <span class="badge badge-green">À accepter</span>
+            {% elif item.ai_recommendation == "borderline" %}
+                <span class="badge badge-orange">À examiner</span>
+            {% elif item.ai_recommendation == "recommend_reject" %}
+                <span class="badge badge-red">À refuser</span>
+            {% else %}
+                -
+            {% endif %}
         </td>
+        <td>{{ item.ai_source|default:"-" }}</td>
         <td>
-          {% if c.cv_file %}
-            <a href="{{ c.cv_file.url }}" target="_blank">Voir CV</a>
-          {% endif %}
-        </td>
-        <td style="min-width: 320px;">
-          <form method="post" action="{% url 'recruiter_accept' c.id %}" style="display:inline;">
-            {% csrf_token %}
-            <button class="btn btn-sm btn-success">Accepter</button>
-          </form>
+            <form method="post" action="{% url 'recruiter_accept' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Accepter</button>
+            </form>
 
-          <form method="post" action="{% url 'recruiter_reject' c.id %}" style="display:inline;">
-            {% csrf_token %}
-            <input type="text" name="reason" placeholder="Motif"
-                   class="form-control form-control-sm d-inline-block"
-                   style="width:160px;">
-            <button class="btn btn-sm btn-danger">Refuser</button>
-          </form>
-        </td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="7" class="text-center text-muted">Aucune candidature.</td></tr>
-    {% endfor %}
-    </tbody>
-  </table>
+            <form method="post" action="{% url 'recruiter_reject' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="text" name="reason" placeholder="Motif du refus">
+                <button type="submit" class="btn btn-danger">Refuser</button>
+            </form>
 
-  <h4 class="mt-5">❌ Refusées (archivées sans ID auto)</h4>
-  <table class="table table-sm">
-    <thead>
-      <tr><th>Réf.</th><th>Candidat</th><th>Date</th><th>Motif</th></tr>
-    </thead>
-    <tbody>
-    {% for r in rejected %}
-      <tr>
-        <td><code>{{ r.ref|slice:":10" }}…</code></td>
-        <td>{{ r.full_name|default:r.candidate.user.username }}</td>
-        <td>{{ r.rejected_at|date:"d/m/Y H:i" }}</td>
-        <td>{{ r.rejection_reason|default:"—" }}</td>
-      </tr>
+            <form method="post" action="{% url 'recruiter_reanalyze' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">🔄 Reanalyser IA</button>
+            </form>
+        </td>
+    </tr>
     {% empty %}
-      <tr><td colspan="4" class="text-center text-muted">Aucun refus.</td></tr>
+    <tr><td colspan="8">Aucune candidature en cours.</td></tr>
     {% endfor %}
-    </tbody>
-  </table>
-</div>
+</table>
+
+<h3>Candidatures refusées</h3>
+<table>
+    <tr>
+        <th>Candidat</th>
+        <th>Score IA</th>
+        <th>Suggestion IA</th>
+        <th>Auto refus</th>
+        <th>Motif</th>
+        <th>Date</th>
+    </tr>
+    {% for item in rejected %}
+    <tr>
+        <td>{{ item.full_name|default:item.candidate.user.real_name }}</td>
+        <td>{{ item.ai_score|default:"-" }}</td>
+        <td>{{ item.ai_recommendation|default:"-" }}</td>
+        <td>{% if item.auto_rejected %}Oui{% else %}Non{% endif %}</td>
+        <td>{{ item.rejection_reason|default:"-" }}</td>
+        <td>{{ item.rejected_at }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Aucune candidature refusée.</td></tr>
+    {% endfor %}
+</table>
 {% endblock %}

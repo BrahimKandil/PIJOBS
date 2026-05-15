@@ -1,16 +1,13 @@
-import json
-
-from django.http import JsonResponse, HttpResponseNotAllowed
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError, transaction
-from django.views.decorators.http import require_http_methods, require_POST
+from django.utils import timezone
+from django.views.decorators.http import require_POST
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from .serializers import RegisterSerializer
 from .forms import LoginForm, CandidatureForm, RejectionForm
@@ -18,11 +15,13 @@ from .models import (
     User, RecruiterProfile, CandidateProfile, RecruitmentPost,
     Candidature, RejectedCandidature,
 )
+from .ai_service import (
+    compute_match_score,
+    rank_candidatures,
+    should_auto_reject,
+)
 
 
-# ============================================================
-# AUTH / DASHBOARDS (existants)
-# ============================================================
 @api_view(['POST'])
 def register(request):
     serializer = RegisterSerializer(data=request.data)
@@ -88,16 +87,20 @@ def recruiter_dashboard_page(request):
 
 def signup(request):
     if request.method == "POST":
-        username   = request.POST.get("username")
-        email      = request.POST.get("email")
-        password   = request.POST.get("password")
-        role       = request.POST.get("role")
-        cin        = request.POST.get("cin")
-        real_name  = request.POST.get("real_name")
+        username = request.POST.get("username")
+        email = request.POST.get("email")
+        password = request.POST.get("password")
+        role = request.POST.get("role")
+        cin = request.POST.get("cin")
+        real_name = request.POST.get("real_name")
 
         user = User.objects.create_user(
-            username=username, email=email, password=password,
-            role=role, cin=cin, real_name=real_name,
+            username=username,
+            email=email,
+            password=password,
+            role=role,
+            cin=cin,
+            real_name=real_name,
         )
 
         if role == "RH":
@@ -130,12 +133,46 @@ def signup(request):
     return render(request, "accounts/signup.html")
 
 
-# ============================================================
-# CANDIDATURES — Côté CANDIDAT
-# ============================================================
+def _ensure_recruiter(view):
+    from functools import wraps
+
+    @wraps(view)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect("login")
+        if getattr(request.user, "role", None) != "RH":
+            messages.error(request, "Accès refusé.")
+            return redirect("login")
+        return view(request, *args, **kwargs)
+    return wrapper
+
+
+def _auto_reject_candidature(cand, reason="Auto-refus IA : score trop faible"):
+    with transaction.atomic():
+        RejectedCandidature.objects.create(
+            candidate=cand.candidate,
+            post=cand.post,
+            cv_file=cand.cv_file,
+            motivation_letter_file=cand.motivation_letter_file,
+            extracted_cv_content=cand.extracted_cv_content,
+            motivation_letter=cand.motivation_letter,
+            full_name=cand.full_name,
+            email=cand.email,
+            phone=cand.phone,
+            cover_message=cand.cover_message,
+            years_of_experience=cand.years_of_experience,
+            ai_score=cand.ai_score,
+            ai_recommendation=cand.ai_recommendation,
+            ai_source=cand.ai_source,
+            ai_last_analysis_at=cand.ai_last_analysis_at,
+            auto_rejected=True,
+            rejection_reason=reason,
+        )
+        cand.delete()
+
+
 @login_required
 def apply_to_post(request, post_id):
-    """Le candidat remplit le formulaire pour postuler à une offre."""
     post = get_object_or_404(RecruitmentPost, id=post_id, is_active=True)
 
     if getattr(request.user, "role", None) != "CANDIDATE":
@@ -148,7 +185,6 @@ def apply_to_post(request, post_id):
         messages.error(request, "Vous devez compléter votre profil candidat.")
         return redirect("candidate_dashboard")
 
-    # Bloque toute double candidature (acceptée OU déjà refusée)
     already = (
         Candidature.objects.filter(candidate=candidate_profile, post=post).exists()
         or RejectedCandidature.objects.filter(candidate=candidate_profile, post=post).exists()
@@ -164,12 +200,33 @@ def apply_to_post(request, post_id):
             candidature.candidate = candidate_profile
             candidature.post = post
             candidature.situation = "pending"
+
             try:
                 candidature.save()
             except IntegrityError:
                 messages.error(request, "Candidature déjà existante.")
                 return redirect("my_applications")
-            messages.success(request, "Candidature envoyée avec succès.")
+
+            ai_result = compute_match_score(post, candidature.cv_file)
+            candidature.extracted_cv_content = ai_result.extracted_text
+            candidature.ai_score = ai_result.score
+            candidature.ai_recommendation = ai_result.recommendation
+            candidature.ai_source = ai_result.source
+            candidature.ai_last_analysis_at = timezone.now()
+            candidature.save(update_fields=[
+                "extracted_cv_content",
+                "ai_score",
+                "ai_recommendation",
+                "ai_source",
+                "ai_last_analysis_at",
+            ])
+
+            if should_auto_reject(ai_result.score):
+                _auto_reject_candidature(candidature)
+                messages.warning(request, "Candidature analysée puis refusée automatiquement par l'IA.")
+                return redirect("my_applications")
+
+            messages.success(request, "Candidature envoyée avec succès et analysée par l'IA.")
             return redirect("my_applications")
     else:
         form = CandidatureForm(initial={
@@ -179,13 +236,13 @@ def apply_to_post(request, post_id):
         })
 
     return render(request, "accounts/candidature_form.html", {
-        "form": form, "post": post,
+        "form": form,
+        "post": post,
     })
 
 
 @login_required
 def my_applications(request):
-    """Mes candidatures (en cours/acceptées + refusées)."""
     try:
         cp = request.user.candidateprofile
     except CandidateProfile.DoesNotExist:
@@ -193,44 +250,31 @@ def my_applications(request):
 
     accepted = Candidature.objects.filter(candidate=cp).select_related("post")
     rejected = RejectedCandidature.objects.filter(candidate=cp).select_related("post")
+
     return render(request, "accounts/my_applications.html", {
-        "accepted": accepted, "rejected": rejected,
+        "accepted": accepted,
+        "rejected": rejected,
     })
-
-
-# ============================================================
-# CANDIDATURES — Côté RECRUTEUR
-# ============================================================
-def _ensure_recruiter(view):
-    """Petit décorateur : autorise uniquement les RH connectés."""
-    from functools import wraps
-    @wraps(view)
-    def wrapper(request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect("login")
-        if getattr(request.user, "role", None) != "RH":
-            messages.error(request, "Accès refusé.")
-            return redirect("login")
-        return view(request, *args, **kwargs)
-    return wrapper
 
 
 @_ensure_recruiter
 def recruiter_applications(request, post_id):
-    """Liste des candidatures reçues pour une offre."""
     post = get_object_or_404(
         RecruitmentPost, id=post_id, recruiter=request.user
     )
-    pending = (
-        Candidature.objects.filter(post=post)
-        .select_related("candidate__user")
-    )
+    pending_qs = Candidature.objects.filter(post=post).select_related("candidate__user")
+    pending = rank_candidatures(list(pending_qs))
+
     rejected = (
         RejectedCandidature.objects.filter(post=post)
         .select_related("candidate__user")
+        .order_by("-rejected_at")
     )
+
     return render(request, "accounts/recruiter_applications.html", {
-        "post": post, "pending": pending, "rejected": rejected,
+        "post": post,
+        "pending": pending,
+        "rejected": rejected,
         "rejection_form": RejectionForm(),
     })
 
@@ -238,7 +282,6 @@ def recruiter_applications(request, post_id):
 @_ensure_recruiter
 @require_POST
 def recruiter_accept(request, candidature_id):
-    """RH accepte une candidature -> reste en table Candidature (DWH)."""
     cand = get_object_or_404(
         Candidature, id=candidature_id, post__recruiter=request.user
     )
@@ -251,19 +294,12 @@ def recruiter_accept(request, candidature_id):
 @_ensure_recruiter
 @require_POST
 def recruiter_reject(request, candidature_id):
-    """
-    RH refuse une candidature :
-      - Crée RejectedCandidature (PK = hash, PAS d'AutoField)
-      - Supprime la Candidature originale
-      => l'AutoField de Candidature n'est pas "consommé" par les refus,
-         et le DWH ne reçoit jamais les refusées.
-    """
     cand = get_object_or_404(
         Candidature, id=candidature_id, post__recruiter=request.user
     )
     form = RejectionForm(request.POST)
     reason = form.data.get("reason", "") if form.is_valid() else ""
-    post_id = cand.post_id  # capturer AVANT delete
+    post_id = cand.post_id
 
     with transaction.atomic():
         RejectedCandidature.objects.create(
@@ -278,9 +314,44 @@ def recruiter_reject(request, candidature_id):
             phone=cand.phone,
             cover_message=cand.cover_message,
             years_of_experience=cand.years_of_experience,
+            ai_score=cand.ai_score,
+            ai_recommendation=cand.ai_recommendation,
+            ai_source=cand.ai_source,
+            ai_last_analysis_at=cand.ai_last_analysis_at,
             rejection_reason=reason,
         )
         cand.delete()
 
     messages.info(request, "Candidature refusée et archivée.")
     return redirect("recruiter_applications", post_id=post_id)
+
+
+@_ensure_recruiter
+@require_POST
+def recruiter_reanalyze(request, candidature_id):
+    cand = get_object_or_404(
+        Candidature, id=candidature_id, post__recruiter=request.user
+    )
+
+    ai_result = compute_match_score(cand.post, cand.cv_file)
+    cand.extracted_cv_content = ai_result.extracted_text
+    cand.ai_score = ai_result.score
+    cand.ai_recommendation = ai_result.recommendation
+    cand.ai_source = ai_result.source
+    cand.ai_last_analysis_at = timezone.now()
+    cand.save(update_fields=[
+        "extracted_cv_content",
+        "ai_score",
+        "ai_recommendation",
+        "ai_source",
+        "ai_last_analysis_at",
+    ])
+
+    if should_auto_reject(ai_result.score):
+        post_id = cand.post_id
+        _auto_reject_candidature(cand, reason="Auto-refus IA après réanalyse")
+        messages.warning(request, "La candidature a été re-analysée puis refusée automatiquement.")
+        return redirect("recruiter_applications", post_id=post_id)
+
+    messages.success(request, "Analyse IA relancée avec succès.")
+    return redirect("recruiter_applications", post_id=cand.post_id)

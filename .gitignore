@@ -1,2 +1,11 @@
+
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+db.sqlite3
+media/
+.env
 data/
 ml_models/

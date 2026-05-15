@@ -54,13 +54,16 @@ class RecruitmentPost(models.Model):
     is_active = models.BooleanField(default=True)
 
 
-# ============================================================
-# CANDIDATURE (acceptée / en attente) — alimente le DWH
-# ============================================================
 class Candidature(models.Model):
     SITUATION_CHOICES = (
-        ("pending",  "Pending"),
+        ("pending", "Pending"),
         ("accepted", "Accepted"),
+    )
+
+    AI_RECOMMENDATION_CHOICES = (
+        ("recommend_accept", "À accepter"),
+        ("borderline", "À examiner"),
+        ("recommend_reject", "À refuser"),
     )
 
     candidate = models.ForeignKey(
@@ -77,7 +80,6 @@ class Candidature(models.Model):
     )
     imported = models.BooleanField(default=False)
 
-    # Fichiers candidature
     cv_file = models.FileField(upload_to='candidatures/cvs/')
     motivation_letter_file = models.FileField(
         upload_to='candidatures/letters/', null=True, blank=True
@@ -85,12 +87,18 @@ class Candidature(models.Model):
     extracted_cv_content = models.TextField(null=True, blank=True)
     motivation_letter = models.TextField(null=True, blank=True)
 
-    # Champs du formulaire
     full_name = models.CharField(max_length=255, blank=True)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=30, blank=True)
     cover_message = models.TextField(blank=True)
     years_of_experience = models.PositiveIntegerField(null=True, blank=True)
+
+    ai_score = models.FloatField(null=True, blank=True)
+    ai_recommendation = models.CharField(
+        max_length=32, choices=AI_RECOMMENDATION_CHOICES, null=True, blank=True
+    )
+    ai_source = models.CharField(max_length=50, blank=True, default="")
+    ai_last_analysis_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         unique_together = ("candidate", "post")
@@ -100,17 +108,13 @@ class Candidature(models.Model):
         return f"{self.candidate.user.username} -> {self.post.title}"
 
 
-# ============================================================
-# CANDIDATURE REFUSEE
-#   - Aucune AutoField : PK = hash SHA1 (déterministe + uuid)
-#   - Donnée jamais exportée vers le Data Warehouse
-# ============================================================
 class RejectedCandidature(models.Model):
-    """
-    Pas d'id auto-incrémenté : la PK est un hash.
-    Conséquence : les refus n'occupent pas de place dans la séquence d'IDs
-    de Candidature et ne polluent pas le Data Warehouse.
-    """
+    AI_RECOMMENDATION_CHOICES = (
+        ("recommend_accept", "À accepter"),
+        ("borderline", "À examiner"),
+        ("recommend_reject", "À refuser"),
+    )
+
     ref = models.CharField(
         max_length=64, primary_key=True, editable=False
     )
@@ -124,7 +128,6 @@ class RejectedCandidature(models.Model):
     )
     date_of_post = models.DateTimeField(default=timezone.now, editable=False)
 
-    # Snapshot du formulaire
     cv_file = models.FileField(upload_to='candidatures_rejected/cvs/')
     motivation_letter_file = models.FileField(
         upload_to='candidatures_rejected/letters/', null=True, blank=True
@@ -138,12 +141,18 @@ class RejectedCandidature(models.Model):
     cover_message = models.TextField(blank=True)
     years_of_experience = models.PositiveIntegerField(null=True, blank=True)
 
+    ai_score = models.FloatField(null=True, blank=True)
+    ai_recommendation = models.CharField(
+        max_length=32, choices=AI_RECOMMENDATION_CHOICES, null=True, blank=True
+    )
+    ai_source = models.CharField(max_length=50, blank=True, default="")
+    ai_last_analysis_at = models.DateTimeField(null=True, blank=True)
+    auto_rejected = models.BooleanField(default=False)
+
     rejection_reason = models.TextField(blank=True)
     rejected_at = models.DateTimeField(default=timezone.now, editable=False)
 
     class Meta:
-        # Empêche les doublons; mais on autorise candidat à se représenter
-        # sur d'autres offres.
         unique_together = ("candidate", "post")
         ordering = ["-rejected_at"]
 
