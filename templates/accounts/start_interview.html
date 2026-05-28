@@ -1,0 +1,14 @@
+<h2>Start Technical Interview</h2>
+
+<h3>{{ post.title }}</h3>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <label>Select Interview End Date:</label>
+    <input type="datetime-local" name="date_fin" required>
+
+    <button type="submit">
+        Start Interview
+    </button>
+</form>

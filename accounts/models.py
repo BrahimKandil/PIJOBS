@@ -44,10 +44,8 @@ class CandidateProfile(models.Model):
 
 class RecruitmentPost(models.Model):
     recruiter = models.ForeignKey(
-        User,
+        RecruiterProfile,
         on_delete=models.CASCADE,
-        null=True,
-        blank=True,
         related_name="posts"
     )
 
@@ -64,6 +62,17 @@ class RecruitmentPost(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     is_active = models.BooleanField(default=True)
+    # Maximum allowed candidatures
+    max_candidatures = models.PositiveIntegerField(default=10)
+
+    # Current number of candidatures
+    current_candidatures = models.PositiveIntegerField(default=0)
+
+    # Technical interview end date
+    entretien_technique_date_fin = models.DateTimeField(
+        null=True,
+        blank=True
+    )
 class Candidature(models.Model):
 
     SITUATION_CHOICES = (
@@ -101,6 +110,17 @@ class Candidature(models.Model):
     )
 
     motivation_letter = models.TextField(
+        null=True,
+        blank=True
+    )
+    quiz_score = models.FloatField(
+        default=0
+    )
+    is_hired = models.BooleanField(
+        default=False
+    )
+
+    proposed_salary = models.FloatField(
         null=True,
         blank=True
     )

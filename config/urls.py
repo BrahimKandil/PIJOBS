@@ -20,10 +20,18 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib import admin
+from django.urls import path, include
+from django.shortcuts import render
+def custom_404(request, exception):
+    return render(request, "404.html", status=404)
+def custom_500(request):
+    return render(request, "accounts/404.html", status=500)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('accounts.urls')),
-
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+handler404 = custom_404
+handler500 = custom_500

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Postuler</title>
+
+    <style>
+        body { font-family: Arial; background: #f0f2f5; padding: 40px; }
+        .card { background: white; width: 600px; margin: auto; padding: 30px; border-radius: 10px; }
+        textarea, input { width: 100%; margin-top: 10px; padding: 10px; }
+        button { padding: 10px 15px; background: #1877f2; color: white; border: none; border-radius: 6px; }
+        .back { display:inline-block;margin-top:10px;color:#1877f2;text-decoration:none; }
+    </style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>Apply to {{ post.title }}</h2>
+
+    <p><b>Company:</b> {{ post.company_name }}</p>
+
+    <form method="POST" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        <label>Motivation Letter</label>
+        {{ form.motivation_letter }}
+
+        <label>Upload CV (optional)</label>
+        {{ form.custom_cv }}
+
+        <button type="submit">Submit</button>
+
+    </form>
+
+    <a href="{% url 'post_details' post.id %}" class="back">
+        Back
+    </a>
+
+</div>
+
+</body>
+</html>

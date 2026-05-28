@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  <title>Interview Panel</title>
+
+  <style>
+
+    body {
+      font-family: Arial;
+      background: #f0f2f5;
+      padding: 40px;
+    }
+
+    .card {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      width: 800px;
+      margin: auto;
+    }
+
+    .section {
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 10px 15px;
+      background: #1877f2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .box {
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+    }
+
+    .senior {
+      border-left: 5px solid green;
+    }
+
+    .intermediate {
+      border-left: 5px solid orange;
+    }
+
+    .junior {
+      border-left: 5px solid blue;
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+<div class="card">
+
+  <h2>
+    {{ post.title }} - Interview Panel
+  </h2>
+
+  <!-- ================================= -->
+  <!-- INTERVIEW NOT STARTED -->
+  <!-- ================================= -->
+
+  {% if not post.entretien_technique_date_fin %}
+
+  <form method="POST">
+
+    {% csrf_token %}
+
+    <label>
+      Select Interview End Date:
+    </label>
+
+    <br><br>
+
+    <input
+            type="datetime-local"
+            name="date_fin"
+            required
+    >
+
+    <br><br>
+
+    <button class="btn" type="submit">
+      🚀 Start Interview
+    </button>
+
+  </form>
+
+  <!-- ================================= -->
+  <!-- INTERVIEW STARTED -->
+  <!-- ================================= -->
+
+  {% else %}
+
+  <p>
+    <b>Interview End:</b>
+    {{ post.entretien_technique_date_fin }}
+  </p>
+  {% endif %}
+
+
+  <hr>
+
+  <h3>🟢 Senior Candidates</h3>
+
+  {% for c in senior_candidates %}
+
+  <div class="box senior">
+
+    <b>Username:</b>
+    {{ c.candidate.user.username }}
+
+    <br><br>
+
+    <b>Skills:</b>
+    {{ c.candidate.skills }}
+
+    <br><br>
+
+    <b>Experience:</b>
+    {{ c.candidate.experience }}
+
+    <br><br>
+
+    <b>Education:</b>
+    {{ c.candidate.education }}
+
+    <br><br>
+
+    <b>Situation:</b>
+    {{ c.situation }}
+
+  </div>
+
+  {% empty %}
+
+  <p>No senior candidates</p>
+
+  {% endfor %}
+
+  <hr>
+
+  <h3>🟡 Intermediate Candidates</h3>
+
+  {% for c in intermediate_candidates %}
+
+  <div class="box intermediate">
+
+    <b>Username:</b>
+    {{ c.candidate.user.username }}
+
+    <br><br>
+
+    <b>Skills:</b>
+    {{ c.candidate.skills }}
+
+    <br><br>
+
+    <b>Experience:</b>
+    {{ c.candidate.experience }}
+
+    <br><br>
+
+    <b>Education:</b>
+    {{ c.candidate.education }}
+
+    <br><br>
+
+    <b>Situation:</b>
+    {{ c.situation }}
+
+  </div>
+
+  {% empty %}
+
+  <p>No intermediate candidates</p>
+
+  {% endfor %}
+
+  <hr>
+
+  <h3>🔵 Junior Candidates</h3>
+
+  {% for c in junior_candidates %}
+
+  <div class="box junior">
+
+    <b>Username:</b>
+    {{ c.candidate.user.username }}
+
+    <br><br>
+
+    <b>Skills:</b>
+    {{ c.candidate.skills }}
+
+    <br><br>
+
+    <b>Experience:</b>
+    {{ c.candidate.experience }}
+
+    <br><br>
+
+    <b>Education:</b>
+    {{ c.candidate.education }}
+
+    <br><br>
+
+    <b>Situation:</b>
+    {{ c.situation }}
+
+  </div>
+
+  {% empty %}
+
+  <p>No junior candidates</p>
+
+  {% endfor %}
+</div>
+
+</body>
+</html>
