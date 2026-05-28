@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Recruitment Post | IRP</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins',sans-serif;
+            min-height:100vh;
+            background:
+                    linear-gradient(rgba(15,23,42,.80), rgba(15,23,42,.80)),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            padding:40px 20px;
+            color:white;
+        }
+
+        .container{
+            max-width:850px;
+            margin:auto;
+        }
+
+        .form-card{
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.1);
+            backdrop-filter:blur(14px);
+            border-radius:28px;
+            padding:40px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.35);
+        }
+
+        .header{
+            text-align:center;
+            margin-bottom:35px;
+        }
+
+        .logo{
+            width:85px;
+            height:85px;
+            margin:0 auto 20px;
+            border-radius:24px;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:30px;
+            font-weight:700;
+            box-shadow:0 10px 25px rgba(59,130,246,.4);
+        }
+
+        .header h1{
+            font-size:34px;
+            margin-bottom:10px;
+        }
+
+        .header p{
+            color:rgba(255,255,255,0.7);
+            font-size:14px;
+        }
+
+        .form-grid{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:22px;
+        }
+
+        .full-width{
+            grid-column:1 / -1;
+        }
+
+        .input-group{
+            display:flex;
+            flex-direction:column;
+        }
+
+        label{
+            margin-bottom:10px;
+            font-weight:500;
+            font-size:14px;
+        }
+
+        input,
+        textarea,
+        select{
+            width:100%;
+            padding:15px 16px;
+            border:none;
+            outline:none;
+            border-radius:16px;
+            background:rgba(255,255,255,0.10);
+            color:white;
+            border:1px solid transparent;
+            transition:0.3s ease;
+            font-size:14px;
+            font-family:'Poppins',sans-serif;
+        }
+
+        textarea{
+            min-height:160px;
+            resize:vertical;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus{
+            border:1px solid #3b82f6;
+            background:rgba(255,255,255,0.15);
+            box-shadow:0 0 0 4px rgba(59,130,246,.18);
+        }
+
+        input::placeholder,
+        textarea::placeholder{
+            color:rgba(255,255,255,0.6);
+        }
+
+        select option{
+            color:black;
+        }
+
+        /* =========================
+            TAG INPUT
+        ========================== */
+
+        .tag-wrapper{
+            position:relative;
+        }
+
+        .tag-container{
+            background:rgba(255,255,255,0.10);
+            border-radius:18px;
+            padding:14px;
+            min-height:65px;
+            border:1px solid transparent;
+            display:flex;
+            flex-wrap:wrap;
+            align-items:center;
+            gap:10px;
+            transition:0.3s;
+        }
+
+        .tag-container:focus-within{
+            border:1px solid #3b82f6;
+            background:rgba(255,255,255,0.15);
+            box-shadow:0 0 0 4px rgba(59,130,246,.18);
+        }
+
+        .tag{
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            color:white;
+            padding:8px 14px;
+            border-radius:30px;
+            display:flex;
+            align-items:center;
+            gap:10px;
+            font-size:13px;
+            animation:fadeIn .2s ease;
+        }
+
+        .tag span{
+            cursor:pointer;
+            font-weight:bold;
+            font-size:14px;
+        }
+
+        .tag-input{
+            flex:1;
+            min-width:120px;
+            border:none;
+            outline:none;
+            background:transparent;
+            color:white;
+            font-size:14px;
+            padding:8px;
+        }
+
+        .tag-input::placeholder{
+            color:rgba(255,255,255,0.55);
+        }
+
+        .skills-select{
+            display:none;
+        }
+
+        /* =========================
+            AUTOCOMPLETE
+        ========================== */
+
+        .autocomplete-box{
+            position:absolute;
+            top:100%;
+            left:0;
+            width:100%;
+            background:rgba(15,23,42,.98);
+            border:1px solid rgba(255,255,255,0.1);
+            border-radius:18px;
+            margin-top:10px;
+            overflow:hidden;
+            z-index:1000;
+            display:none;
+            max-height:240px;
+            overflow-y:auto;
+            box-shadow:0 10px 30px rgba(0,0,0,.35);
+        }
+
+        .autocomplete-item{
+            padding:14px 16px;
+            cursor:pointer;
+            transition:0.2s;
+            border-bottom:1px solid rgba(255,255,255,0.05);
+            font-size:14px;
+        }
+
+        .autocomplete-item:hover{
+            background:rgba(59,130,246,.18);
+        }
+
+        .autocomplete-item:last-child{
+            border-bottom:none;
+        }
+
+        @keyframes fadeIn{
+            from{
+                opacity:0;
+                transform:translateY(5px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        /* =========================
+            BUTTON
+        ========================== */
+
+        .submit-btn{
+            width:100%;
+            margin-top:30px;
+            padding:16px;
+            border:none;
+            border-radius:18px;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            color:white;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+            transition:0.3s ease;
+            box-shadow:0 10px 25px rgba(59,130,246,.35);
+        }
+
+        .submit-btn:hover{
+            transform:translateY(-2px);
+            box-shadow:0 14px 30px rgba(59,130,246,.45);
+        }
+
+        @media(max-width:768px){
+
+            .form-card{
+                padding:30px 22px;
+            }
+
+            .form-grid{
+                grid-template-columns:1fr;
+            }
+
+            .header h1{
+                font-size:28px;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="form-card">
+
+        <div class="header">
+
+            <div class="logo">
+                IRP
+            </div>
+
+            <h1>Create Recruitment Post</h1>
+
+            <p>
+                Publish a new AI-powered recruitment opportunity
+            </p>
+
+        </div>
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="form-grid">
+
+                <!-- TITLE -->
+                <div class="input-group">
+                    <label>Job Title</label>
+                    {{ form.title }}
+                </div>
+
+                <!-- DOMAIN -->
+                <div class="input-group">
+                    <label>Domain</label>
+                    {{ form.domain }}
+                </div>
+
+                <!-- DESCRIPTION -->
+                <div class="input-group full-width">
+                    <label>Job Description</label>
+                    {{ form.description }}
+                </div>
+
+                <!-- TAG SKILLS -->
+                <div class="input-group full-width">
+
+                    <label>Required Skills</label>
+
+                    <div class="tag-wrapper">
+
+                        <div class="tag-container" id="tagContainer">
+
+                            <input
+                                    type="text"
+                                    class="tag-input"
+                                    id="tagInput"
+                                    placeholder="Type a skill..."
+                                    autocomplete="off"
+                            >
+
+                        </div>
+
+                        <!-- AUTOCOMPLETE -->
+                        <div class="autocomplete-box" id="autocompleteBox"></div>
+
+                    </div>
+
+                    <!-- HIDDEN MULTI SELECT -->
+                    <select
+                            name="skills"
+                            multiple
+                            class="skills-select"
+                            id="skillsSelect"
+                    >
+
+                        {% for skill in skills %}
+
+                        <option value="{{ skill }}">
+                            {{ skill }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <!-- MAX -->
+                <div class="input-group">
+                    <label>Max Candidatures</label>
+                    {{ form.max_candidatures }}
+                </div>
+
+                <!-- DATE -->
+                <div class="input-group">
+                    <label>Technical Interview End Date</label>
+                    {{ form.entretien_technique_date_fin }}
+                </div>
+
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Publish Recruitment Post
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<script>
+
+    const tagInput = document.getElementById("tagInput");
+    const tagContainer = document.getElementById("tagContainer");
+    const skillsSelect = document.getElementById("skillsSelect");
+    const autocompleteBox = document.getElementById("autocompleteBox");
+
+    let selectedSkills = [];
+
+    // =========================
+    // ALL SKILLS FROM DJANGO
+    // =========================
+
+    const availableSkills = [
+
+        {% for skill in skills %}
+
+    "{{ skill|escapejs }}",
+
+    {% endfor %}
+
+    ];
+
+    // =========================
+    // ENTER TO ADD CUSTOM SKILL
+    // =========================
+
+    tagInput.addEventListener("keydown", function(e){
+
+        if(e.key === "Enter"){
+
+            e.preventDefault();
+
+            let skill = tagInput.value.trim();
+
+            if(skill !== ""){
+                addSkill(skill);
+            }
+
+            autocompleteBox.style.display = "none";
+        }
+
+    });
+
+    // =========================
+    // AUTOCOMPLETE SEARCH
+    // =========================
+
+    tagInput.addEventListener("input", function(){
+
+        const value = this.value.trim().toLowerCase();
+
+        autocompleteBox.innerHTML = "";
+
+        if(value === ""){
+
+            autocompleteBox.style.display = "none";
+            return;
+        }
+
+        const filteredSkills = availableSkills.filter(skill =>
+
+            skill.toLowerCase().includes(value)
+            &&
+
+            !selectedSkills.includes(skill)
+
+        );
+
+        if(filteredSkills.length === 0){
+
+            autocompleteBox.style.display = "none";
+            return;
+        }
+
+        autocompleteBox.style.display = "block";
+
+        filteredSkills.slice(0, 8).forEach(skill => {
+
+            const item = document.createElement("div");
+
+            item.classList.add("autocomplete-item");
+
+            item.innerText = skill;
+
+            item.onclick = function(){
+
+                addSkill(skill);
+
+                tagInput.value = "";
+
+                autocompleteBox.style.display = "none";
+            };
+
+            autocompleteBox.appendChild(item);
+
+        });
+
+    });
+
+    // =========================
+    // ADD SKILL
+    // =========================
+
+    function addSkill(skill){
+
+        if(selectedSkills.includes(skill)){
+            return;
+        }
+
+        selectedSkills.push(skill);
+
+        createTag(skill);
+
+        addOption(skill);
+
+        tagInput.value = "";
+    }
+
+    // =========================
+    // CREATE TAG
+    // =========================
+
+    function createTag(skill){
+
+        const tag = document.createElement("div");
+
+        tag.classList.add("tag");
+
+        tag.innerHTML = `
+            ${skill}
+            <span onclick="removeTag('${skill}', this)">×</span>
+        `;
+
+        tagContainer.insertBefore(tag, tagInput);
+    }
+
+    // =========================
+    // ADD OPTION TO SELECT
+    // =========================
+
+    function addOption(skill){
+
+        let option = document.createElement("option");
+
+        option.value = skill;
+        option.text = skill;
+        option.selected = true;
+
+        skillsSelect.appendChild(option);
+    }
+
+    // =========================
+    // REMOVE TAG
+    // =========================
+
+    function removeTag(skill, element){
+
+        selectedSkills = selectedSkills.filter(s => s !== skill);
+
+        element.parentElement.remove();
+
+        Array.from(skillsSelect.options).forEach(option => {
+
+            if(option.value === skill){
+                option.remove();
+            }
+
+        });
+
+    }
+
+    // =========================
+    // CLOSE AUTOCOMPLETE
+    // =========================
+
+    document.addEventListener("click", function(e){
+
+        if(!e.target.closest(".tag-wrapper")){
+            autocompleteBox.style.display = "none";
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Create Recruitment Post | IRP</title>-->
+
+<!--    &lt;!&ndash; Google Font &ndash;&gt;-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">-->
+
+<!--    <style>-->
+
+<!--        *{-->
+<!--            margin:0;-->
+<!--            padding:0;-->
+<!--            box-sizing:border-box;-->
+<!--        }-->
+
+<!--        body{-->
+<!--            font-family:'Poppins',sans-serif;-->
+<!--            min-height:100vh;-->
+<!--            background:-->
+<!--                    linear-gradient(rgba(15,23,42,.80), rgba(15,23,42,.80)),-->
+<!--                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;-->
+<!--            padding:40px 20px;-->
+<!--            color:white;-->
+<!--        }-->
+
+<!--        .container{-->
+<!--            max-width:850px;-->
+<!--            margin:auto;-->
+<!--        }-->
+
+<!--        .form-card{-->
+<!--            background:rgba(255,255,255,0.08);-->
+<!--            border:1px solid rgba(255,255,255,0.1);-->
+<!--            backdrop-filter:blur(14px);-->
+<!--            border-radius:28px;-->
+<!--            padding:40px;-->
+<!--            box-shadow:0 10px 40px rgba(0,0,0,0.35);-->
+<!--        }-->
+
+<!--        .header{-->
+<!--            text-align:center;-->
+<!--            margin-bottom:35px;-->
+<!--        }-->
+
+<!--        .logo{-->
+<!--            width:85px;-->
+<!--            height:85px;-->
+<!--            margin:0 auto 20px;-->
+<!--            border-radius:24px;-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            display:flex;-->
+<!--            justify-content:center;-->
+<!--            align-items:center;-->
+<!--            font-size:30px;-->
+<!--            font-weight:700;-->
+<!--            box-shadow:0 10px 25px rgba(59,130,246,.4);-->
+<!--        }-->
+
+<!--        .header h1{-->
+<!--            font-size:34px;-->
+<!--            margin-bottom:10px;-->
+<!--        }-->
+
+<!--        .header p{-->
+<!--            color:rgba(255,255,255,0.7);-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        .form-grid{-->
+<!--            display:grid;-->
+<!--            grid-template-columns:1fr 1fr;-->
+<!--            gap:22px;-->
+<!--        }-->
+
+<!--        .full-width{-->
+<!--            grid-column:1 / -1;-->
+<!--        }-->
+
+<!--        .input-group{-->
+<!--            display:flex;-->
+<!--            flex-direction:column;-->
+<!--        }-->
+
+<!--        label{-->
+<!--            margin-bottom:10px;-->
+<!--            font-weight:500;-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        input,-->
+<!--        textarea,-->
+<!--        select{-->
+<!--            width:100%;-->
+<!--            padding:15px 16px;-->
+<!--            border:none;-->
+<!--            outline:none;-->
+<!--            border-radius:16px;-->
+<!--            background:rgba(255,255,255,0.10);-->
+<!--            color:white;-->
+<!--            border:1px solid transparent;-->
+<!--            transition:0.3s ease;-->
+<!--            font-size:14px;-->
+<!--            font-family:'Poppins',sans-serif;-->
+<!--        }-->
+
+<!--        textarea{-->
+<!--            min-height:160px;-->
+<!--            resize:vertical;-->
+<!--        }-->
+
+<!--        input:focus,-->
+<!--        textarea:focus,-->
+<!--        select:focus{-->
+<!--            border:1px solid #3b82f6;-->
+<!--            background:rgba(255,255,255,0.15);-->
+<!--            box-shadow:0 0 0 4px rgba(59,130,246,.18);-->
+<!--        }-->
+
+<!--        input::placeholder,-->
+<!--        textarea::placeholder{-->
+<!--            color:rgba(255,255,255,0.6);-->
+<!--        }-->
+
+<!--        select option{-->
+<!--            color:black;-->
+<!--        }-->
+
+<!--        /* =========================-->
+<!--            TAG INPUT-->
+<!--        ========================== */-->
+
+<!--        .tag-container{-->
+<!--            background:rgba(255,255,255,0.10);-->
+<!--            border-radius:18px;-->
+<!--            padding:14px;-->
+<!--            min-height:65px;-->
+<!--            border:1px solid transparent;-->
+<!--            display:flex;-->
+<!--            flex-wrap:wrap;-->
+<!--            align-items:center;-->
+<!--            gap:10px;-->
+<!--            transition:0.3s;-->
+<!--        }-->
+
+<!--        .tag-container:focus-within{-->
+<!--            border:1px solid #3b82f6;-->
+<!--            background:rgba(255,255,255,0.15);-->
+<!--            box-shadow:0 0 0 4px rgba(59,130,246,.18);-->
+<!--        }-->
+
+<!--        .tag{-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            color:white;-->
+<!--            padding:8px 14px;-->
+<!--            border-radius:30px;-->
+<!--            display:flex;-->
+<!--            align-items:center;-->
+<!--            gap:10px;-->
+<!--            font-size:13px;-->
+<!--            animation:fadeIn .2s ease;-->
+<!--        }-->
+
+<!--        .tag span{-->
+<!--            cursor:pointer;-->
+<!--            font-weight:bold;-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        .tag-input{-->
+<!--            flex:1;-->
+<!--            min-width:120px;-->
+<!--            border:none;-->
+<!--            outline:none;-->
+<!--            background:transparent;-->
+<!--            color:white;-->
+<!--            font-size:14px;-->
+<!--            padding:8px;-->
+<!--        }-->
+
+<!--        .tag-input::placeholder{-->
+<!--            color:rgba(255,255,255,0.55);-->
+<!--        }-->
+
+<!--        .skills-select{-->
+<!--            display:none;-->
+<!--        }-->
+
+<!--        @keyframes fadeIn{-->
+<!--            from{-->
+<!--                opacity:0;-->
+<!--                transform:translateY(5px);-->
+<!--            }-->
+<!--            to{-->
+<!--                opacity:1;-->
+<!--                transform:translateY(0);-->
+<!--            }-->
+<!--        }-->
+
+<!--        /* =========================-->
+<!--            BUTTON-->
+<!--        ========================== */-->
+
+<!--        .submit-btn{-->
+<!--            width:100%;-->
+<!--            margin-top:30px;-->
+<!--            padding:16px;-->
+<!--            border:none;-->
+<!--            border-radius:18px;-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            color:white;-->
+<!--            font-size:16px;-->
+<!--            font-weight:600;-->
+<!--            cursor:pointer;-->
+<!--            transition:0.3s ease;-->
+<!--            box-shadow:0 10px 25px rgba(59,130,246,.35);-->
+<!--        }-->
+
+<!--        .submit-btn:hover{-->
+<!--            transform:translateY(-2px);-->
+<!--            box-shadow:0 14px 30px rgba(59,130,246,.45);-->
+<!--        }-->
+
+<!--        @media(max-width:768px){-->
+
+<!--            .form-card{-->
+<!--                padding:30px 22px;-->
+<!--            }-->
+
+<!--            .form-grid{-->
+<!--                grid-template-columns:1fr;-->
+<!--            }-->
+
+<!--            .header h1{-->
+<!--                font-size:28px;-->
+<!--            }-->
+
+<!--        }-->
+
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="container">-->
+
+<!--    <div class="form-card">-->
+
+<!--        <div class="header">-->
+
+<!--            <div class="logo">-->
+<!--                IRP-->
+<!--            </div>-->
+
+<!--            <h1>Create Recruitment Post</h1>-->
+
+<!--            <p>-->
+<!--                Publish a new AI-powered recruitment opportunity-->
+<!--            </p>-->
+
+<!--        </div>-->
+
+<!--        <form method="POST">-->
+
+<!--            {% csrf_token %}-->
+
+<!--            <div class="form-grid">-->
+
+<!--                &lt;!&ndash; TITLE &ndash;&gt;-->
+<!--                <div class="input-group">-->
+<!--                    <label>Job Title</label>-->
+<!--                    {{ form.title }}-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; DOMAIN &ndash;&gt;-->
+<!--                <div class="input-group">-->
+<!--                    <label>Domain</label>-->
+<!--                    {{ form.domain }}-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; DESCRIPTION &ndash;&gt;-->
+<!--                <div class="input-group full-width">-->
+<!--                    <label>Job Description</label>-->
+<!--                    {{ form.description }}-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; TAG SKILLS &ndash;&gt;-->
+<!--                <div class="input-group full-width">-->
+
+<!--                    <label>Required Skills</label>-->
+
+<!--                    <div class="tag-container" id="tagContainer">-->
+
+<!--                        <input-->
+<!--                                type="text"-->
+<!--                                class="tag-input"-->
+<!--                                id="tagInput"-->
+<!--                                placeholder="Type a skill and press Enter"-->
+<!--                        >-->
+
+<!--                    </div>-->
+
+<!--                    &lt;!&ndash; HIDDEN MULTI SELECT &ndash;&gt;-->
+<!--                    <select-->
+<!--                            name="skills"-->
+<!--                            multiple-->
+<!--                            class="skills-select"-->
+<!--                            id="skillsSelect"-->
+<!--                    >-->
+
+<!--                        {% for skill in skills %}-->
+
+<!--                        <option value="{{ skill }}">-->
+<!--                            {{ skill }}-->
+<!--                        </option>-->
+
+<!--                        {% endfor %}-->
+
+<!--                    </select>-->
+
+<!--                </div>-->
+
+<!--                &lt;!&ndash; MAX &ndash;&gt;-->
+<!--                <div class="input-group">-->
+<!--                    <label>Max Candidatures</label>-->
+<!--                    {{ form.max_candidatures }}-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; DATE &ndash;&gt;-->
+<!--                <div class="input-group">-->
+<!--                    <label>Technical Interview End Date</label>-->
+<!--                    {{ form.entretien_technique_date_fin }}-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+<!--            <button type="submit" class="submit-btn">-->
+<!--                Publish Recruitment Post-->
+<!--            </button>-->
+
+<!--        </form>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<script>-->
+
+<!--    const tagInput = document.getElementById("tagInput");-->
+<!--    const tagContainer = document.getElementById("tagContainer");-->
+<!--    const skillsSelect = document.getElementById("skillsSelect");-->
+
+<!--    let selectedSkills = [];-->
+
+<!--    tagInput.addEventListener("keydown", function(e){-->
+
+<!--        if(e.key === "Enter"){-->
+
+<!--            e.preventDefault();-->
+
+<!--            let skill = tagInput.value.trim();-->
+
+<!--            if(skill !== "" && !selectedSkills.includes(skill)){-->
+
+<!--                selectedSkills.push(skill);-->
+
+<!--                createTag(skill);-->
+
+<!--                addOption(skill);-->
+
+<!--                tagInput.value = "";-->
+<!--            }-->
+<!--        }-->
+<!--    });-->
+
+<!--    function createTag(skill){-->
+
+<!--        const tag = document.createElement("div");-->
+
+<!--        tag.classList.add("tag");-->
+
+<!--        tag.innerHTML = `-->
+<!--            ${skill}-->
+<!--            <span onclick="removeTag('${skill}', this)">×</span>-->
+<!--        `;-->
+
+<!--        tagContainer.insertBefore(tag, tagInput);-->
+<!--    }-->
+
+<!--    function addOption(skill){-->
+
+<!--        let option = document.createElement("option");-->
+
+<!--        option.value = skill;-->
+<!--        option.text = skill;-->
+<!--        option.selected = true;-->
+
+<!--        skillsSelect.appendChild(option);-->
+<!--    }-->
+
+<!--    function removeTag(skill, element){-->
+
+<!--        selectedSkills = selectedSkills.filter(s => s !== skill);-->
+
+<!--        element.parentElement.remove();-->
+
+<!--        Array.from(skillsSelect.options).forEach(option => {-->
+
+<!--            if(option.value === skill){-->
+<!--                option.remove();-->
+<!--            }-->
+
+<!--        });-->
+<!--    }-->
+
+<!--</script>-->
+
+<!--</body>-->
+<!--</html>-->
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>Create Recruitment Post</title>-->
+
+<!--    <style>-->
+
+<!--        body{-->
+<!--            font-family: Arial;-->
+<!--            background:#f0f2f5;-->
+<!--            padding:40px;-->
+<!--        }-->
+
+<!--        .form-container{-->
+<!--            background:white;-->
+<!--            padding:30px;-->
+<!--            border-radius:10px;-->
+<!--            width:700px;-->
+<!--            margin:auto;-->
+<!--        }-->
+
+<!--        input,-->
+<!--        textarea,-->
+<!--        select{-->
+<!--            width:100%;-->
+<!--            padding:12px;-->
+<!--            margin-top:5px;-->
+<!--            margin-bottom:20px;-->
+<!--            border:1px solid #ccc;-->
+<!--            border-radius:6px;-->
+<!--            box-sizing:border-box;-->
+<!--        }-->
+
+<!--        button{-->
+<!--            background:#1877f2;-->
+<!--            color:white;-->
+<!--            border:none;-->
+<!--            padding:12px 20px;-->
+<!--            border-radius:6px;-->
+<!--            cursor:pointer;-->
+<!--        }-->
+
+<!--        label{-->
+<!--            font-weight:bold;-->
+<!--        }-->
+
+<!--        /* MULTI SELECT */-->
+
+<!--        .multi-select{-->
+<!--            height:250px;-->
+<!--        }-->
+
+<!--    </style>-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="form-container">-->
+
+<!--    <h2>Create Recruitment Post</h2>-->
+
+<!--    <form method="POST">-->
+
+<!--        {% csrf_token %}-->
+
+<!--        &lt;!&ndash; TITLE &ndash;&gt;-->
+<!--        <label>Title</label>-->
+<!--        {{ form.title }}-->
+
+<!--        &lt;!&ndash; DOMAIN &ndash;&gt;-->
+<!--        <label>Domain</label>-->
+<!--        {{ form.domain }}-->
+
+<!--        &lt;!&ndash; DESCRIPTION &ndash;&gt;-->
+<!--        <label>Description</label>-->
+<!--        {{ form.description }}-->
+
+<!--        &lt;!&ndash; REQUIRED SKILLS &ndash;&gt;-->
+
+<!--        <label>Required Skills</label>-->
+
+<!--        <select-->
+<!--                name="skills"-->
+<!--                multiple-->
+<!--                class="multi-select"-->
+<!--        >-->
+
+<!--            {% for skill in skills %}-->
+
+<!--            <option value="{{ skill }}">-->
+<!--                {{ skill }}-->
+<!--            </option>-->
+
+<!--            {% endfor %}-->
+
+<!--        </select>-->
+
+<!--        &lt;!&ndash; MAX &ndash;&gt;-->
+<!--        <label>Max Candidatures</label>-->
+<!--        {{ form.max_candidatures }}-->
+
+<!--        &lt;!&ndash; DATE &ndash;&gt;-->
+<!--        <label>-->
+<!--            Technical Interview End Date-->
+<!--        </label>-->
+
+<!--        {{ form.entretien_technique_date_fin }}-->
+
+<!--        <button type="submit">-->
+<!--            Create Post-->
+<!--        </button>-->
+
+<!--    </form>-->
+
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->

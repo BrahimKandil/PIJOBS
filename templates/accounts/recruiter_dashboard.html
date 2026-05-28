@@ -1,128 +1,750 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Recruiter Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recruiter Dashboard | IRP</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        body {
-            margin: 0;
-            font-family: Arial;
-            background: #f0f2f5;
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
 
-        /* TOP BANNER */
-        .header {
-            background: #1877f2;
-            color: white;
-            padding: 20px;
+        body{
+            font-family:'Poppins',sans-serif;
+            background:#0f172a;
+            color:white;
         }
 
-        .header h1 {
-            margin: 0;
+        /* =========================
+            HEADER
+        ========================== */
+
+        .header{
+            position:sticky;
+            top:0;
+            z-index:100;
+            background:rgba(15,23,42,0.95);
+            backdrop-filter:blur(12px);
+            border-bottom:1px solid rgba(255,255,255,0.08);
+            padding:18px 40px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
         }
 
-        .create-btn {
-            background: white;
-            color: #1877f2;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
+        .header-left h1{
+            font-size:28px;
+            font-weight:600;
         }
 
-        /* LAYOUT */
-        .container {
-            display: flex;
+        .header-left p{
+            color:rgba(255,255,255,0.7);
+            margin-top:4px;
+            font-size:14px;
         }
 
-        /* LEFT PANEL */
-        .sidebar {
-            width: 250px;
-            background: white;
-            padding: 20px;
-            height: 100vh;
-            position: sticky;
-            top: 0;
+        .header-actions{
+            display:flex;
+            gap:15px;
+            align-items:center;
         }
 
-        .metric {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f5f5f5;
-            border-radius: 8px;
+        .btn{
+            padding:12px 18px;
+            border:none;
+            border-radius:14px;
+            cursor:pointer;
+            font-weight:600;
+            transition:0.3s;
+            text-decoration:none;
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
         }
 
-        /* MAIN FEED */
-        .feed {
-            flex: 1;
-            padding: 20px;
+        .btn-primary{
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            color:white;
+            box-shadow:0 8px 20px rgba(59,130,246,.35);
         }
 
-        .post {
-            background: white;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 10px;
+        .btn-primary:hover{
+            transform:translateY(-2px);
         }
 
-        .post h3 {
-            margin: 0;
+        .btn-danger{
+            background:rgba(239,68,68,.15);
+            color:#f87171;
+            border:1px solid rgba(239,68,68,.3);
         }
 
-        .skills {
-            color: rgb(128, 128, 128);
-            font-size: 12px;
+        .btn-danger:hover{
+            background:rgba(239,68,68,.25);
         }
 
-        .floating {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #1877f2;
-            color: white;
-            border-radius: 50%;
-            padding: 20px;
-            font-size: 20px;
-            cursor: pointer;
+        /* =========================
+            LAYOUT
+        ========================== */
+
+        .container{
+            display:flex;
+            gap:25px;
+            padding:30px;
         }
+
+        /* =========================
+            SIDEBAR
+        ========================== */
+
+        .sidebar{
+            width:320px;
+            display:flex;
+            flex-direction:column;
+            gap:20px;
+        }
+
+        .card{
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:24px;
+            padding:24px;
+            backdrop-filter:blur(12px);
+        }
+
+        .profile{
+            text-align:center;
+        }
+
+        .avatar{
+            width:90px;
+            height:90px;
+            margin:0 auto 15px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:32px;
+            font-weight:700;
+            box-shadow:0 10px 25px rgba(59,130,246,.4);
+        }
+
+        .profile h2{
+            font-size:22px;
+            margin-bottom:5px;
+        }
+
+        .profile p{
+            color:rgba(255,255,255,0.7);
+            font-size:14px;
+            margin-bottom:4px;
+        }
+
+        .metrics{
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            gap:15px;
+        }
+
+        .metric{
+            background:rgba(255,255,255,0.05);
+            padding:18px;
+            border-radius:18px;
+            text-align:center;
+            border:1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric h3{
+            font-size:24px;
+            margin-bottom:5px;
+            color:#7dd3fc;
+        }
+
+        .metric span{
+            font-size:13px;
+            color:rgba(255,255,255,0.7);
+        }
+
+        /* =========================
+            FEED
+        ========================== */
+
+        .feed{
+            flex:1;
+        }
+
+        .feed-title{
+            margin-bottom:20px;
+        }
+
+        .feed-title h2{
+            font-size:28px;
+            margin-bottom:5px;
+        }
+
+        .feed-title p{
+            color:rgba(255,255,255,0.7);
+        }
+
+        .post{
+            background:rgba(255,255,255,0.06);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:24px;
+            padding:24px;
+            margin-bottom:20px;
+            transition:0.3s;
+        }
+
+        .post:hover{
+            transform:translateY(-4px);
+            border-color:rgba(59,130,246,.35);
+        }
+
+        .post-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:flex-start;
+            margin-bottom:15px;
+        }
+
+        .post h3{
+            font-size:22px;
+            margin-bottom:8px;
+        }
+
+        .company{
+            color:#7dd3fc;
+            font-weight:500;
+            margin-bottom:10px;
+        }
+
+        .description{
+            color:rgba(255,255,255,0.8);
+            line-height:1.7;
+            margin-bottom:18px;
+        }
+
+        .skills{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+            margin-bottom:18px;
+        }
+
+        .skill{
+            background:rgba(59,130,246,.18);
+            color:#93c5fd;
+            padding:8px 14px;
+            border-radius:30px;
+            font-size:13px;
+            border:1px solid rgba(59,130,246,.25);
+        }
+
+        .post-footer{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-top:20px;
+        }
+
+        .applications{
+            color:#4ade80;
+            font-weight:600;
+        }
+
+        .created{
+            color:rgba(255,255,255,0.55);
+            font-size:13px;
+        }
+
+        .details-btn{
+            margin-top:18px;
+        }
+
+        /* =========================
+            FLOATING BUTTON
+        ========================== */
+
+        .floating{
+            position:fixed;
+            bottom:30px;
+            right:30px;
+            width:70px;
+            height:70px;
+            border-radius:50%;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:32px;
+            color:white;
+            text-decoration:none;
+            box-shadow:0 10px 30px rgba(59,130,246,.4);
+            transition:0.3s;
+        }
+
+        .floating:hover{
+            transform:scale(1.08);
+        }
+
+        .empty{
+            text-align:center;
+            padding:80px 20px;
+            background:rgba(255,255,255,0.05);
+            border-radius:24px;
+            border:1px dashed rgba(255,255,255,0.1);
+        }
+
+        .empty h3{
+            margin-bottom:10px;
+        }
+
+        .empty p{
+            color:rgba(255,255,255,0.7);
+        }
+
+        /* =========================
+            RESPONSIVE
+        ========================== */
+
+        @media(max-width:1000px){
+
+            .container{
+                flex-direction:column;
+            }
+
+            .sidebar{
+                width:100%;
+            }
+
+        }
+
+        @media(max-width:700px){
+
+            .header{
+                padding:20px;
+                flex-direction:column;
+                gap:20px;
+                align-items:flex-start;
+            }
+
+            .post-header,
+            .post-footer{
+                flex-direction:column;
+                gap:10px;
+            }
+
+            .metrics{
+                grid-template-columns:1fr;
+            }
+
+        }
+
     </style>
 </head>
 
 <body>
 
+<!-- =========================
+    HEADER
+========================= -->
+
 <div class="header">
-    <h1>Recruiter Dashboard</h1>
-    <button class="create-btn">+ Create Post</button>
+
+    <div class="header-left">
+        <h1>Recruiter Dashboard</h1>
+
+        <p>
+            Welcome back,
+            {{ recruiter.real_name|default:user.username }}
+        </p>
+    </div>
+
+    <div class="header-actions">
+
+        <a href="{% url 'create_post' %}" class="btn btn-primary">
+            + Create Post
+        </a>
+
+        <a href="{% url 'logout' %}" class="btn btn-danger">
+            Logout
+        </a>
+
+    </div>
+
 </div>
+
+<!-- =========================
+    MAIN LAYOUT
+========================= -->
 
 <div class="container">
 
-    <!-- LEFT SIDEBAR -->
+    <!-- =========================
+        SIDEBAR
+    ========================== -->
+
     <div class="sidebar">
-        <div class="metric">Total Posts: {{ total_posts }}</div>
-        <div class="metric">Active Posts: {{ active_posts }}</div>
-        <div class="metric">Applications: 0</div>
-        <div class="metric">Avg/Post: 0</div>
+
+        <!-- PROFILE CARD -->
+        <div class="card profile">
+
+            <div class="avatar">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+
+            <h2>
+                {{ recruiter.real_name|default:user.username }}
+            </h2>
+
+            <p>
+                {{ recruiter.company_name }}
+            </p>
+
+            <p>
+                {{ recruiter.email }}
+            </p>
+
+            <p>
+                {{ recruiter.location }}
+            </p>
+
+            <p>
+                {{ recruiter.sector }}
+            </p>
+
+        </div>
+
+        <!-- METRICS -->
+        <div class="card">
+
+            <div class="metrics">
+
+                <div class="metric">
+                    <h3>{{ total_posts }}</h3>
+                    <span>Total Posts</span>
+                </div>
+
+                <div class="metric">
+                    <h3>{{ active_posts }}</h3>
+                    <span>Active Posts</span>
+                </div>
+
+                <div class="metric">
+                    <h3>{{ total_applications }}</h3>
+                    <span>Applications</span>
+                </div>
+
+                <div class="metric">
+                    <h3>{{ avg_per_post }}</h3>
+                    <span>Avg/Post</span>
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-    <!-- MAIN FEED -->
+    <!-- =========================
+        FEED
+    ========================== -->
+
     <div class="feed">
 
-        {% for post in posts %}
-        <div class="post">
-            <h3>{{ post.title }}</h3>
-            <p><b>{{ post.company }}</b> - {{ post.domain }}</p>
-            <p>{{ post.description }}</p>
-            <p class="skills">{{ post.skills }}</p>
-            <small>{{ post.created_at }}</small>
+        <div class="feed-title">
+
+            <h2>Your Recruitment Posts</h2>
+
+            <p>
+                Manage and monitor your recruitment activity
+            </p>
+
         </div>
+
+        {% if posts %}
+
+        {% for post in posts %}
+
+        <div class="post">
+
+            <div class="post-header">
+
+                <div>
+
+                    <h3>{{ post.title }}</h3>
+
+                    <div class="company">
+                        {{ recruiter.company_name }}
+                        • {{ post.domain }}
+                    </div>
+
+                </div>
+
+                <div class="applications">
+                    {{ post.applications_count }} Applications
+                </div>
+
+            </div>
+
+            <div class="description">
+                {{ post.description|truncatewords:40 }}
+            </div>
+
+            <div class="skills">
+
+                {% for skill in post.skills_list %}
+                <div class="skill">
+                    {{ skill }}
+                </div>
+                {% endfor %}
+
+            </div>
+
+            <div class="post-footer">
+
+                <div class="created">
+                    Created:
+                    {{ post.created_at|date:"Y-m-d H:i" }}
+                </div>
+
+                <a href="{% url 'post_details' post.id %}"
+                   class="btn btn-primary details-btn">
+
+                    View Technical Sheet
+
+                </a>
+
+            </div>
+
+        </div>
+
         {% endfor %}
 
+        {% else %}
+
+        <div class="empty">
+
+            <h3>No recruitment posts yet</h3>
+
+            <p>
+                Create your first recruitment post to start receiving applications.
+            </p>
+
+        </div>
+
+        {% endif %}
+
     </div>
+
 </div>
 
-<div class="floating">+</div>
+<!-- FLOATING BUTTON -->
+
+<a href="{% url 'create_post' %}" class="floating">
+    +
+</a>
 
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>Recruiter Dashboard</title>-->
+
+<!--    <style>-->
+<!--        body {-->
+<!--            margin: 0;-->
+<!--            font-family: Arial;-->
+<!--            background: #f0f2f5;-->
+<!--        }-->
+
+<!--        /* TOP BANNER */-->
+<!--        .header {-->
+<!--            background: #1877f2;-->
+<!--            color: white;-->
+<!--            padding: 20px;-->
+<!--        }-->
+
+<!--        .header h1 {-->
+<!--            margin: 0;-->
+<!--        }-->
+
+<!--        .create-btn {-->
+<!--            background: white;-->
+<!--            color: #1877f2;-->
+<!--            padding: 10px 15px;-->
+<!--            border: none;-->
+<!--            border-radius: 6px;-->
+<!--            cursor: pointer;-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+
+<!--        /* LAYOUT */-->
+<!--        .container {-->
+<!--            display: flex;-->
+<!--        }-->
+
+<!--        /* LEFT PANEL */-->
+<!--        .sidebar {-->
+<!--            width: 250px;-->
+<!--            background: white;-->
+<!--            padding: 20px;-->
+<!--            height: 100vh;-->
+<!--            position: sticky;-->
+<!--            top: 0;-->
+<!--        }-->
+
+<!--        .metric {-->
+<!--            margin-bottom: 15px;-->
+<!--            padding: 10px;-->
+<!--            background: #f5f5f5;-->
+<!--            border-radius: 8px;-->
+<!--        }-->
+
+<!--        /* MAIN FEED */-->
+<!--        .feed {-->
+<!--            flex: 1;-->
+<!--            padding: 20px;-->
+<!--        }-->
+
+<!--        .post {-->
+<!--            background: white;-->
+<!--            padding: 15px;-->
+<!--            margin-bottom: 15px;-->
+<!--            border-radius: 10px;-->
+<!--        }-->
+
+<!--        .post h3 {-->
+<!--            margin: 0;-->
+<!--        }-->
+
+<!--        .skills {-->
+<!--            color: gray;-->
+<!--            font-size: 12px;-->
+<!--            margin-top: 8px;-->
+<!--        }-->
+
+<!--        .floating {-->
+<!--            position: fixed;-->
+<!--            bottom: 30px;-->
+<!--            right: 30px;-->
+<!--            background: #1877f2;-->
+<!--            color: white;-->
+<!--            border-radius: 50%;-->
+<!--            padding: 20px;-->
+<!--            font-size: 20px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        .details-btn {-->
+<!--            margin-top: 10px;-->
+<!--            background: #1877f2;-->
+<!--            color: white;-->
+<!--            border: none;-->
+<!--            padding: 8px 12px;-->
+<!--            border-radius: 6px;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--    </style>-->
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="header">-->
+<!--    <h1>Recruiter Dashboard</h1>-->
+
+<!--    <a href="{% url 'create_post' %}">-->
+<!--        <button class="create-btn">-->
+<!--            + Create Post-->
+<!--        </button>-->
+<!--    </a>-->
+<!--</div>-->
+
+<!--<div class="container">-->
+
+<!--    &lt;!&ndash; LEFT SIDEBAR &ndash;&gt;-->
+<!--    <div class="sidebar">-->
+
+<!--        <div class="metric">-->
+<!--            Total Posts: {{ total_posts }}-->
+<!--        </div>-->
+
+<!--        <div class="metric">-->
+<!--            Active Posts: {{ active_posts }}-->
+<!--        </div>-->
+
+<!--        <div class="metric">-->
+<!--            Applications: {{ total_applications }}-->
+<!--        </div>-->
+
+<!--        <div class="metric">-->
+<!--            Avg/Post: {{ avg_per_post }}-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; MAIN FEED &ndash;&gt;-->
+<!--    <div class="feed">-->
+
+<!--        {% if posts %}-->
+
+<!--        {% for post in posts %}-->
+<!--        <div class="post">-->
+
+<!--            <h3>{{ post.title }}</h3>-->
+
+<!--            <p>-->
+<!--                <b>{{ post.company }}</b>-->
+<!--                - {{ post.domain }}-->
+<!--            </p>-->
+
+<!--            <p>-->
+<!--                {{ post.description }}...-->
+<!--            </p>-->
+
+<!--            <p class="skills">-->
+<!--                Skills: {{ post.skills }}-->
+<!--            </p>-->
+
+<!--            <p style="color:green;">-->
+<!--                Candidatures: {{ post.applications_count }}-->
+<!--            </p>-->
+<!--            <small>-->
+<!--                Created: {{ post.created_at|date:"Y-m-d H:i" }}-->
+<!--            </small>-->
+
+<!--            <br>-->
+
+<!--            <a href="{% url 'post_details' post.id %}">-->
+<!--                <button class="details-btn">-->
+<!--                    View Fiche Technique-->
+<!--                </button>-->
+<!--            </a>-->
+
+<!--        </div>-->
+<!--        {% endfor %}-->
+
+<!--        {% else %}-->
+
+<!--        <p>No posts yet. Create your first recruitment post.</p>-->
+
+<!--        {% endif %}-->
+
+<!--    </div>-->
+<!--</div>-->
+
+<!--<a href="{% url 'create_post' %}">-->
+<!--    <div class="floating">+</div>-->
+<!--</a>-->
+
+<!--</body>-->
+<!--</html>-->

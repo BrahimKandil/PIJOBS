@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 
-from accounts.models import User
+from accounts.models import User, RecruitmentPost
 import accounts
 from .models import User, RecruiterProfile,CandidateProfile
 class LoginForm(AuthenticationForm):
@@ -37,3 +37,48 @@ class CandidateForm(forms.ModelForm):
     class Meta:
         model = CandidateProfile
         fields = ['skills', 'experience', 'education', 'phone']
+
+
+class RecruitmentPostForm(forms.ModelForm):
+    class Meta:
+        model = RecruitmentPost
+
+        fields = [
+            'title',
+            'domain',
+            'description',
+            'max_candidatures',
+        ]
+
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 5}),
+            'required_skills': forms.Textarea(attrs={'rows': 3}),
+        }
+
+from django import forms
+
+from accounts.models import Candidature
+
+
+class CandidatureForm(forms.ModelForm):
+
+    custom_cv = forms.FileField(
+        required=False
+    )
+
+    class Meta:
+
+        model = Candidature
+
+        fields = [
+            "motivation_letter",
+            "custom_cv"
+        ]
+
+        widgets = {
+            "motivation_letter": forms.Textarea(
+                attrs={
+                    "rows": 5
+                }
+            )
+        }

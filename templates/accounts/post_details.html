@@ -1,0 +1,1695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Job Details | IRP</title>
+
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins',sans-serif;
+            min-height:100vh;
+            background:
+                    linear-gradient(rgba(15,23,42,.85), rgba(15,23,42,.88)),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            padding:40px 20px;
+            color:white;
+        }
+
+        .container{
+            max-width:1200px;
+            margin:auto;
+        }
+
+        .card{
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.10);
+            backdrop-filter:blur(14px);
+            border-radius:28px;
+            padding:40px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.35);
+        }
+
+        /* ====================================
+                    HEADER
+        ==================================== */
+
+        .top-header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:20px;
+            flex-wrap:wrap;
+            margin-bottom:30px;
+        }
+
+        .title{
+            font-size:36px;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .company{
+            color:rgba(255,255,255,0.70);
+            font-size:15px;
+        }
+
+        .status-box{
+            background:rgba(59,130,246,.18);
+            border:1px solid rgba(59,130,246,.35);
+            padding:16px 20px;
+            border-radius:18px;
+            min-width:240px;
+        }
+
+        .status-label{
+            font-size:13px;
+            color:rgba(255,255,255,0.7);
+            margin-bottom:5px;
+        }
+
+        .status-value{
+            font-size:18px;
+            font-weight:600;
+        }
+
+        /* ====================================
+                    GRID
+        ==================================== */
+
+        .grid{
+            display:grid;
+            grid-template-columns:2fr 1fr;
+            gap:24px;
+        }
+
+        .section-card{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:24px;
+            padding:25px;
+            margin-bottom:22px;
+        }
+
+        .section-title{
+            font-size:20px;
+            font-weight:600;
+            margin-bottom:18px;
+        }
+
+        .description{
+            line-height:1.8;
+            color:rgba(255,255,255,0.82);
+            font-size:14px;
+        }
+
+        /* ====================================
+                    BADGES
+        ==================================== */
+
+        .skills{
+            display:flex;
+            flex-wrap:wrap;
+            gap:10px;
+        }
+
+        .badge{
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            color:white;
+            padding:10px 16px;
+            border-radius:40px;
+            font-size:13px;
+            font-weight:500;
+            box-shadow:0 8px 20px rgba(59,130,246,.25);
+        }
+
+        /* ====================================
+                    METRICS
+        ==================================== */
+
+        .metric-box{
+            display:flex;
+            flex-direction:column;
+            gap:18px;
+        }
+
+        .metric{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            padding:20px;
+            border-radius:22px;
+        }
+
+        .metric h3{
+            font-size:14px;
+            color:rgba(255,255,255,0.65);
+            margin-bottom:10px;
+            font-weight:500;
+        }
+
+        .metric-value{
+            font-size:28px;
+            font-weight:700;
+        }
+
+        /* ====================================
+                    BUTTONS
+        ==================================== */
+
+        .btn{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            gap:10px;
+            padding:14px 20px;
+            border-radius:18px;
+            text-decoration:none;
+            border:none;
+            cursor:pointer;
+            color:white;
+            font-weight:600;
+            transition:0.3s ease;
+            margin-top:12px;
+            font-size:14px;
+        }
+
+        .btn:hover{
+            transform:translateY(-2px);
+        }
+
+        .btn-primary{
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            box-shadow:0 10px 25px rgba(59,130,246,.35);
+        }
+
+        .btn-warning{
+            background:linear-gradient(135deg,#f59e0b,#f97316);
+            box-shadow:0 10px 25px rgba(249,115,22,.30);
+        }
+
+        .btn-success{
+            background:linear-gradient(135deg,#10b981,#22c55e);
+            box-shadow:0 10px 25px rgba(16,185,129,.30);
+        }
+
+        /* ====================================
+                    STATUS
+        ==================================== */
+
+        .danger{
+            color:#f87171;
+            font-weight:600;
+        }
+
+        .success{
+            color:#4ade80;
+            font-weight:600;
+        }
+        .ErrorRefused{
+            color:#f87171;
+            font-weight:600;
+        }
+
+        /* ====================================
+                    QUIZ BOX
+        ==================================== */
+
+        .quiz-box{
+            margin-top:25px;
+            border-radius:24px;
+            padding:25px;
+            background:rgba(59,130,246,.12);
+            border:1px solid rgba(59,130,246,.30);
+        }
+
+        .quiz-box h3{
+            margin-bottom:14px;
+            font-size:22px;
+        }
+
+        /* ====================================
+                    TABLE
+        ==================================== */
+
+        .table-wrapper{
+            overflow-x:auto;
+            margin-top:20px;
+        }
+
+        table{
+            width:100%;
+            border-collapse:collapse;
+            overflow:hidden;
+            border-radius:18px;
+        }
+
+        table th{
+            background:rgba(255,255,255,0.10);
+            color:white;
+            padding:16px;
+            text-align:left;
+            font-size:14px;
+            font-weight:600;
+        }
+
+        table td{
+            padding:16px;
+            border-top:1px solid rgba(255,255,255,0.08);
+            color:rgba(255,255,255,0.85);
+            font-size:14px;
+        }
+
+        table tr:hover{
+            background:rgba(255,255,255,0.04);
+        }
+
+        /* ====================================
+                    FOOTER
+        ==================================== */
+
+        .footer-actions{
+            margin-top:35px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:20px;
+            flex-wrap:wrap;
+        }
+
+        .back{
+            display:inline-flex;
+            align-items:center;
+            justify-content:center;
+            padding:14px 20px;
+            background:rgba(255,255,255,0.08);
+            color:white;
+            text-decoration:none;
+            border-radius:18px;
+            transition:0.3s ease;
+            border:1px solid rgba(255,255,255,0.08);
+        }
+
+        .back:hover{
+            background:rgba(255,255,255,0.14);
+        }
+
+        hr{
+            border:none;
+            height:1px;
+            background:rgba(255,255,255,0.08);
+            margin:30px 0;
+        }
+
+        @media(max-width:950px){
+
+            .grid{
+                grid-template-columns:1fr;
+            }
+
+            .title{
+                font-size:30px;
+            }
+
+            .card{
+                padding:28px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="card">
+
+        <!-- ====================================== -->
+        <!-- HEADER -->
+        <!-- ====================================== -->
+
+        <div class="top-header">
+
+            <div>
+
+                <div class="title">
+                    {{ post.title }}
+                </div>
+
+                <div class="company">
+                    {{ post.company_name }} • {{ post.domain }}
+                </div>
+
+            </div>
+
+            <div class="status-box">
+
+                <div class="status-label">
+                    Interview Status
+                </div>
+
+                <div class="status-value">
+
+                    {% if not interview_started %}
+
+                    <span class="danger">
+                        Not Started
+                    </span>
+
+                    {% elif interview_open %}
+
+                    <span class="success">
+                        Interview Open
+                    </span>
+
+                    {% else %}
+
+                    <span class="danger">
+                        Interview Closed
+                    </span>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ====================================== -->
+        <!-- GRID -->
+        <!-- ====================================== -->
+
+        <div class="grid">
+
+            <!-- LEFT -->
+            <div>
+
+                <!-- DESCRIPTION -->
+                <div class="section-card">
+
+                    <div class="section-title">
+                        Job Description
+                    </div>
+
+                    <div class="description">
+                        {{ post.description }}
+                    </div>
+
+                </div>
+
+                <!-- SKILLS -->
+                <div class="section-card">
+
+                    <div class="section-title">
+                        Required Skills
+                    </div>
+
+                    <div class="skills">
+
+                        {% for skill in skills_list %}
+
+                        <span class="badge">
+                            {{ skill }}
+                        </span>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+                <!-- ====================================== -->
+                <!-- RECRUITER -->
+                <!-- ====================================== -->
+
+                {% if is_recruiter %}
+
+                <div class="section-card">
+
+                    <div class="section-title">
+                        Recruiter Panel
+                    </div>
+
+                    {% if post.is_active == False %}
+
+                    <p class="success" style="margin-bottom:20px;">
+                        Recruitment closed successfully.
+                    </p>
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            {% for c in recruiter_waiting_candidates %}
+                            {% if c.is_hired == True %}
+
+                            <tr>
+
+                                <td>
+                                    {{ c.candidate.user.username }}
+                                </td>
+
+                                <td>
+                                    {{ c.date_of_post }}
+                                </td>
+
+                            </tr>
+
+                            {% endif %}
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% else %}
+
+                    {% if not max_reached %}
+
+                    <p class="danger">
+                        Waiting for full applications before interview
+                    </p>
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Date</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+
+                            {% for c in recruiter_waiting_candidates %}
+
+                            <tr>
+
+                                <td>
+                                    {{ c.candidate.user.username }}
+                                </td>
+
+                                <td>
+                                    {{ c.date_of_post }}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% if max_reached and not interview_started %}
+
+                    <a
+                            href="{% url 'interview_panel' post.id %}"
+                            class="btn btn-warning"
+                    >
+                        🚀 Start Technical Interview
+                    </a>
+
+                    {% endif %}
+
+                    {% if interview_open %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Score</th>
+                            </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                            {% for c in recruiter_ranked_candidates %}
+
+                            <tr>
+
+                                <td>
+                                    {{ c.candidate.user.username }}
+                                </td>
+
+                                <td>
+                                    {{ c.quiz_score }}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% if interview_closed %}
+
+                    <div class="table-wrapper">
+
+                        <table>
+
+                            <thead>
+
+                            <tr>
+                                <th>Candidate</th>
+                                <th>Score</th>
+                            </tr>
+
+                            </thead>
+
+                            <tbody>
+
+                            {% for c in recruiter_ranked_candidates %}
+
+                            <tr>
+
+                                <td>
+                                    {{ c.candidate.user.username }}
+                                </td>
+
+                                <td>
+                                    {{ c.quiz_score }}
+                                </td>
+
+                            </tr>
+
+                            {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <a
+                            href="{% url 'hire_candidate_view' post.id %}"
+                            class="btn btn-success"
+                    >
+                        ✅ Hire Candidate
+                    </a>
+
+                    {% endif %}
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+                <!-- ====================================== -->
+                <!-- CANDIDATE -->
+                <!-- ====================================== -->
+
+                {% if is_candidate %}
+
+                <div class="section-card">
+
+                    <div class="section-title">
+                        Candidate Panel
+                    </div>
+
+                    {% if can_apply %}
+
+                    <a
+                            class="btn btn-primary"
+                            href="{% url 'apply_to_post' post.id %}"
+                    >
+                        Apply Now
+                    </a>
+
+                    {% endif %}
+
+                    {% if not already_applied and max_reached %}
+
+                    <p class="danger">
+                        Maximum candidatures reached
+                    </p>
+
+                    {% endif %}
+
+                    {% if already_applied and not interview_started %}
+
+                    {% if situation == "accepted" %}
+                    <p class="success">
+                        ✓ You already applied to this job
+                    </p>
+                    {% else %}
+                    <p class="ErrorRefused">
+                        ✕ You already applied to this job. But You Got Refused.
+                    </p>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if not already_applied and interview_started %}
+
+                    <p class="danger">
+                        Interview locked
+                    </p>
+
+                    {% endif %}
+
+                    {% if can_take_quiz %}
+
+                    <div class="quiz-box">
+
+                        <h3>
+                            🧠 Technical Quiz Available
+                        </h3>
+
+                        <p style="margin-bottom:14px;">
+                            Current Score:
+                            <b>{{ candidate_score }}</b>
+                        </p>
+
+                        <div class="skills">
+
+                            {% for skill in skills_list %}
+
+                            <span class="badge">
+                                {{ skill }}
+                            </span>
+
+                            {% endfor %}
+
+                        </div>
+
+                        <a
+                                class="btn btn-warning"
+                                href="{% url 'start_quiz' post.id %}"
+                        >
+                            🚀 Start Quiz
+                        </a>
+
+                    </div>
+
+                    {% endif %}
+
+                    {% if waiting_for_hiring %}
+
+                    <p class="success" style="margin-top:20px;">
+                        Interview finished. Waiting recruiter decision.
+                    </p>
+
+                    <p style="margin-top:10px;">
+                        Your Score:
+                        <b>{{ candidate_score }}</b>
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- RIGHT -->
+            <div>
+
+                <div class="metric-box">
+
+                    <div class="metric">
+
+                        <h3>
+                            Applications
+                        </h3>
+
+                        <div class="metric-value">
+                            {{ post.current_candidatures }}
+                            /
+                            {{ post.max_candidatures }}
+                        </div>
+
+                    </div>
+
+                    <div class="metric">
+
+                        <h3>
+                            Domain
+                        </h3>
+
+                        <div class="metric-value" style="font-size:22px;">
+                            {{ post.domain }}
+                        </div>
+
+                    </div>
+
+                    <div class="metric">
+
+                        <h3>
+                            Published Date
+                        </h3>
+
+                        <div class="metric-value" style="font-size:18px;">
+                            {{ post.created_at }}
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer-actions">
+
+            {% if is_candidate %}
+            <a href="{% url 'candidate_dashboard' %}" class="back">
+                ← Back to Dashboard
+            </a>
+            {% endif %}
+
+            {% if is_recruiter %}
+            <a href="{% url 'recruiter_dashboard_page' %}" class="back">
+                ← Back to Dashboard
+            </a>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+
+<!--<head>-->
+
+<!--    <title>Job Details</title>-->
+
+<!--    <style>-->
+<!--        .back {-->
+<!--            margin-top: 20px;-->
+<!--            display: inline-block;-->
+<!--            padding: 10px 15px;-->
+<!--            background: #1877f2;-->
+<!--            color: white;-->
+<!--            text-decoration: none;-->
+<!--            border-radius: 6px;-->
+<!--        }-->
+
+<!--        body{-->
+<!--            font-family: Arial;-->
+<!--            background: #f0f2f5;-->
+<!--            padding: 40px;-->
+<!--        }-->
+
+<!--        .card{-->
+<!--            background: white;-->
+<!--            width: 950px;-->
+<!--            margin: auto;-->
+<!--            padding: 30px;-->
+<!--            border-radius: 12px;-->
+<!--        }-->
+
+<!--        .title{-->
+<!--            font-size: 28px;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .company{-->
+<!--            color: gray;-->
+<!--            margin-top: 5px;-->
+<!--        }-->
+
+<!--        .section{-->
+<!--            margin-top: 25px;-->
+<!--        }-->
+
+<!--        .badge{-->
+<!--            display: inline-block;-->
+<!--            background: #e4e6eb;-->
+<!--            padding: 7px 12px;-->
+<!--            border-radius: 20px;-->
+<!--            margin: 4px;-->
+<!--        }-->
+
+<!--        .btn{-->
+<!--            display: inline-block;-->
+<!--            padding: 12px 18px;-->
+<!--            border-radius: 8px;-->
+<!--            text-decoration: none;-->
+<!--            border: none;-->
+<!--            cursor: pointer;-->
+<!--            color: white;-->
+<!--            background: #1877f2;-->
+<!--            margin-top: 10px;-->
+<!--        }-->
+
+<!--        .btn-warning{-->
+<!--            background: orange;-->
+<!--        }-->
+
+<!--        .btn-success{-->
+<!--            background: green;-->
+<!--        }-->
+
+<!--        .danger{-->
+<!--            color: red;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .success{-->
+<!--            color: green;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .quiz-box{-->
+<!--            margin-top: 25px;-->
+<!--            border: 2px solid #1877f2;-->
+<!--            border-radius: 10px;-->
+<!--            padding: 20px;-->
+<!--            background: #f8fbff;-->
+<!--        }-->
+
+<!--        table{-->
+<!--            width: 100%;-->
+<!--            border-collapse: collapse;-->
+<!--            margin-top: 20px;-->
+<!--        }-->
+
+<!--        table th,-->
+<!--        table td{-->
+<!--            border: 1px solid #ddd;-->
+<!--            padding: 12px;-->
+<!--            text-align: left;-->
+<!--        }-->
+
+<!--        table th{-->
+<!--            background: #f5f5f5;-->
+<!--        }-->
+
+<!--    </style>-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="card">-->
+
+<!--    &lt;!&ndash; ====================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; JOB INFO &ndash;&gt;-->
+<!--    &lt;!&ndash; ====================================== &ndash;&gt;-->
+
+<!--    <div class="title">-->
+<!--        {{ post.title }}-->
+<!--    </div>-->
+
+<!--    <div class="company">-->
+<!--        {{ post.company_name }} - {{ post.domain }}-->
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Description:</b>-->
+
+<!--        <p>-->
+<!--            {{ post.description }}-->
+<!--        </p>-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Required Skills:</b>-->
+
+<!--        <br>-->
+
+<!--        {% for skill in skills_list %}-->
+
+<!--        <span class="badge">-->
+<!--            {{ skill }}-->
+<!--        </span>-->
+
+<!--        {% endfor %}-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Applications:</b>-->
+
+<!--        {{ post.current_candidatures }}-->
+<!--        /-->
+<!--        {{ post.max_candidatures }}-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Interview Status:</b>-->
+
+<!--        {% if not interview_started %}-->
+
+<!--        <span class="danger">-->
+<!--            Not Started-->
+<!--        </span>-->
+
+<!--        {% elif interview_open %}-->
+
+<!--        <span class="success">-->
+<!--            Interview Open-->
+<!--        </span>-->
+
+<!--        {% else %}-->
+
+<!--        <span class="danger">-->
+<!--            Interview Closed-->
+<!--        </span>-->
+
+<!--        {% endif %}-->
+
+<!--    </div>-->
+
+<!--    <hr>-->
+
+<!--    &lt;!&ndash; ====================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; RECRUITER &ndash;&gt;-->
+<!--    &lt;!&ndash; ====================================== &ndash;&gt;-->
+
+<!--    {% if is_recruiter %}-->
+
+<!--    <h2>-->
+<!--        Recruiter Panel-->
+<!--    </h2>-->
+<!--    {% if post.is_active == False %}-->
+<!--    <b>The Recruitement Has Been Closed This is the User recruited</b>-->
+<!--    <table>-->
+
+<!--        <thead>-->
+
+<!--        <tr>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Date</th>-->
+<!--        </tr>-->
+
+<!--        </thead>-->
+
+<!--        <tbody>-->
+
+<!--        {% for c in recruiter_waiting_candidates %}-->
+<!--        {% if c.is_hired == True %}-->
+
+<!--        <tr>-->
+
+<!--            <td>-->
+<!--                {{ c.candidate.user.username }}-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                {{ c.date_of_post }}-->
+<!--            </td>-->
+
+<!--        </tr>-->
+
+<!--         {% endif %}-->
+<!--        {% endfor %}-->
+
+<!--        </tbody>-->
+
+<!--    </table>-->
+
+
+<!--    &lt;!&ndash; WAITING FOR FULL APPLICATIONS &ndash;&gt;-->
+<!--    {% else %}-->
+
+<!--    {% if not max_reached %}-->
+
+<!--    <p class="danger">-->
+<!--        Waiting for full applications before interview-->
+<!--    </p>-->
+
+<!--    <table>-->
+
+<!--        <thead>-->
+
+<!--        <tr>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Date</th>-->
+<!--        </tr>-->
+
+<!--        </thead>-->
+
+<!--        <tbody>-->
+
+<!--        {% for c in recruiter_waiting_candidates %}-->
+
+<!--        <tr>-->
+
+<!--            <td>-->
+<!--                {{ c.candidate.user.username }}-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                {{ c.date_of_post }}-->
+<!--            </td>-->
+
+<!--        </tr>-->
+
+<!--        {% endfor %}-->
+
+<!--        </tbody>-->
+
+<!--    </table>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; MAX REACHED + INTERVIEW NOT STARTED &ndash;&gt;-->
+
+<!--    {% if max_reached and not interview_started %}-->
+
+<!--    <a-->
+<!--            href="{% url 'interview_panel' post.id %}"-->
+<!--            class="btn btn-warning"-->
+<!--    >-->
+<!--        🚀 Start Technical Interview-->
+<!--    </a>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; INTERVIEW OPEN &ndash;&gt;-->
+
+<!--    {% if interview_open %}-->
+
+<!--    <h3>-->
+<!--        Candidate Ranking-->
+<!--    </h3>-->
+<!--    <table>-->
+
+<!--        <thead>-->
+
+<!--        <tr>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Score</th>-->
+<!--        </tr>-->
+
+<!--        </thead>-->
+
+<!--        <tbody>-->
+
+<!--        {% for c in recruiter_ranked_candidates %}-->
+
+<!--        <tr>-->
+
+<!--            <td>-->
+<!--                {{ c.candidate.user.username }}-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                {{ c.quiz_score }}-->
+<!--            </td>-->
+
+<!--        </tr>-->
+
+<!--        {% endfor %}-->
+
+<!--        </tbody>-->
+
+<!--    </table>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; INTERVIEW CLOSED &ndash;&gt;-->
+
+<!--    {% if interview_closed %}-->
+
+<!--    <h3>-->
+<!--        Final Ranking-->
+<!--    </h3>-->
+
+<!--    <table>-->
+
+<!--        <thead>-->
+
+<!--        <tr>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Score</th>-->
+<!--        </tr>-->
+
+<!--        </thead>-->
+
+<!--        <tbody>-->
+
+<!--        {% for c in recruiter_ranked_candidates %}-->
+
+<!--        <tr>-->
+
+<!--            <td>-->
+<!--                {{ c.candidate.user.username }}-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                {{ c.quiz_score }}-->
+<!--            </td>-->
+
+<!--        </tr>-->
+
+<!--        {% endfor %}-->
+
+<!--        </tbody>-->
+
+<!--    </table>-->
+<!--    <br>-->
+<!--    <td>-->
+
+<!--        <a-->
+<!--                href="{% url 'hire_candidate_view' post.id %}"-->
+<!--                class="btn btn-success"-->
+<!--        >-->
+<!--            Hire-->
+<!--        </a>-->
+
+<!--    </td>-->
+
+<!--    {% endif %}-->
+<!--    {% endif %}-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; ====================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; CANDIDATE &ndash;&gt;-->
+<!--    &lt;!&ndash; ====================================== &ndash;&gt;-->
+
+<!--    {% if is_candidate %}-->
+
+<!--    <h2>-->
+<!--        Candidate Panel-->
+<!--    </h2>-->
+
+<!--    {% if post.is_active %}-->
+<!--    <b>The Recruitement Has Been Closed This is the User recruited</b>-->
+<!--    <table>-->
+
+<!--        <thead>-->
+
+<!--        <tr>-->
+<!--            <th>Candidate</th>-->
+<!--            <th>Date</th>-->
+<!--        </tr>-->
+
+<!--        </thead>-->
+
+<!--        <tbody>-->
+
+<!--        {% for c in recruiter_waiting_candidates %}-->
+
+<!--        <tr>-->
+
+<!--            <td>-->
+<!--                {{ c.candidate.user.username }}-->
+<!--            </td>-->
+
+<!--            <td>-->
+<!--                {{ c.date_of_post }}-->
+<!--            </td>-->
+
+<!--        </tr>-->
+
+<!--        {% endfor %}-->
+
+<!--        </tbody>-->
+
+<!--    </table>-->
+
+
+<!--    &lt;!&ndash; WAITING FOR FULL APPLICATIONS &ndash;&gt;-->
+<!--    {% else %}-->
+
+
+<!--    &lt;!&ndash; CAN APPLY &ndash;&gt;-->
+
+<!--    {% if can_apply %}-->
+
+<!--    <a-->
+<!--            class="btn"-->
+<!--            href="{% url 'apply_to_post' post.id %}"-->
+<!--    >-->
+<!--        Postuler-->
+<!--    </a>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; MAX REACHED &ndash;&gt;-->
+
+<!--    {% if not already_applied and max_reached %}-->
+
+<!--    <p class="danger">-->
+<!--        Maximum candidatures reached-->
+<!--    </p>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; ALREADY APPLIED + INTERVIEW NOT STARTED &ndash;&gt;-->
+
+<!--    {% if already_applied and not interview_started %}-->
+
+<!--    <p class="success">-->
+<!--        ✓ You already applied to this job-->
+<!--    </p>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; INTERVIEW LOCKED &ndash;&gt;-->
+
+<!--    {% if not already_applied and interview_started %}-->
+
+<!--    <p class="danger">-->
+<!--        Interview locked (wait full applications)-->
+<!--    </p>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; QUIZ &ndash;&gt;-->
+
+<!--    {% if can_take_quiz %}-->
+
+<!--    <div class="quiz-box">-->
+
+<!--        <h3>-->
+<!--            🧠 Technical Quiz Available-->
+<!--        </h3>-->
+
+<!--        <p>-->
+<!--            Your current score:-->
+<!--            <b>{{ candidate_score }}</b>-->
+<!--        </p>-->
+
+<!--        <p>-->
+<!--            Skills evaluated:-->
+<!--        </p>-->
+
+<!--        {% for skill in skills_list %}-->
+
+<!--        <span class="badge">-->
+<!--            {{ skill }}-->
+<!--        </span>-->
+
+<!--        {% endfor %}-->
+
+<!--        <br><br>-->
+
+<!--        <a-->
+<!--                class="btn btn-warning"-->
+<!--                href="{% url 'start_quiz' post.id %}"-->
+<!--        >-->
+<!--            🚀 Start Quiz-->
+<!--        </a>-->
+
+<!--    </div>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; WAITING HIRING &ndash;&gt;-->
+
+<!--    {% if waiting_for_hiring %}-->
+
+<!--    <p class="success">-->
+<!--        Interview finished. Waiting for recruiter decision.-->
+<!--    </p>-->
+
+<!--    <p>-->
+<!--        Your score:-->
+<!--        <b>{{ candidate_score }}</b>-->
+<!--    </p>-->
+
+<!--    {% endif %}-->
+
+<!--    {% endif %}-->
+<!--    {% endif %}-->
+
+<!--    <br><br>-->
+
+<!--    <div style="margin-bottom:20px; display:flex; justify-content:space-between;">-->
+
+<!--        {% if is_candidate %}-->
+<!--        <a href="{% url 'candidate_dashboard' %}" class="back">-->
+<!--            Back to Dashboard-->
+<!--        </a>-->
+<!--        {% endif %}-->
+
+<!--        {% if is_recruiter %}-->
+<!--        <a href="{% url 'recruiter_dashboard_page' %}" class="back">-->
+<!--            Back to Dashboard-->
+<!--        </a>-->
+<!--        {% endif %}-->
+
+<!--    </div>-->
+<!--</div>-->
+
+<!--</body>-->
+
+<!--</html>-->
+
+
+
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+
+<!--    <title>Fiche Technique</title>-->
+
+<!--    <style>-->
+
+<!--        body {-->
+<!--            font-family: Arial;-->
+<!--            background: #f0f2f5;-->
+<!--            padding: 40px;-->
+<!--        }-->
+
+<!--        .card {-->
+<!--            background: white;-->
+<!--            padding: 30px;-->
+<!--            border-radius: 10px;-->
+<!--            width: 700px;-->
+<!--            margin: auto;-->
+<!--        }-->
+
+<!--        .title {-->
+<!--            font-size: 24px;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .company {-->
+<!--            color: gray;-->
+<!--            margin-bottom: 10px;-->
+<!--        }-->
+
+<!--        .section {-->
+<!--            margin-top: 15px;-->
+<!--        }-->
+
+<!--        .badge {-->
+<!--            padding: 5px 10px;-->
+<!--            background: #e4e6eb;-->
+<!--            border-radius: 20px;-->
+<!--            margin: 3px;-->
+<!--            display: inline-block;-->
+<!--        }-->
+
+<!--        .back {-->
+<!--            margin-top: 20px;-->
+<!--            display: inline-block;-->
+<!--            padding: 10px 15px;-->
+<!--            background: #1877f2;-->
+<!--            color: white;-->
+<!--            text-decoration: none;-->
+<!--            border-radius: 6px;-->
+<!--        }-->
+
+<!--        .danger {-->
+<!--            color: red;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .success {-->
+<!--            color: green;-->
+<!--            font-weight: bold;-->
+<!--        }-->
+
+<!--        .btn {-->
+<!--            padding: 10px 15px;-->
+<!--            background: #1877f2;-->
+<!--            color: white;-->
+<!--            border-radius: 6px;-->
+<!--            text-decoration: none;-->
+<!--            display: inline-block;-->
+<!--            border: none;-->
+<!--            cursor: pointer;-->
+<!--        }-->
+
+<!--        .btn-warning {-->
+<!--            background: orange;-->
+<!--        }-->
+
+<!--        .quiz-box {-->
+<!--            margin-top: 20px;-->
+<!--            padding: 20px;-->
+<!--            border: 2px solid #1877f2;-->
+<!--            border-radius: 10px;-->
+<!--            background: #f8fbff;-->
+<!--        }-->
+
+<!--    </style>-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="card">-->
+
+<!--    <div class="title">-->
+<!--        {{ post.title }}-->
+<!--    </div>-->
+
+<!--    <div class="company">-->
+<!--        {{ post.company_name }} - {{ post.domain }}-->
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Description:</b>-->
+
+<!--        <p>-->
+<!--            {{ post.description }}-->
+<!--        </p>-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Required Skills:</b>-->
+
+<!--        <br>-->
+
+<!--        {% for skill in skills_list %}-->
+
+<!--        <span class="badge">-->
+<!--            {{ skill }}-->
+<!--        </span>-->
+
+<!--        {% endfor %}-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Max Candidatures:</b>-->
+<!--        {{ post.max_candidatures }}-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Current Candidatures:</b>-->
+<!--        {{ post.current_candidatures }}-->
+
+<!--    </div>-->
+
+<!--    <div class="section">-->
+
+<!--        <b>Technical Interview End:</b>-->
+
+<!--        {% if interview_started %}-->
+
+<!--        <span class="success">-->
+<!--            {{ post.entretien_technique_date_fin }}-->
+<!--        </span>-->
+
+<!--        {% else %}-->
+
+<!--        <span class="danger">-->
+<!--            Not started-->
+<!--        </span>-->
+
+<!--        {% endif %}-->
+
+<!--    </div>-->
+
+<!--    <hr>-->
+
+<!--    &lt;!&ndash; =========================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; RECRUITER &ndash;&gt;-->
+<!--    &lt;!&ndash; =========================================== &ndash;&gt;-->
+
+<!--    {% if is_recruiter %}-->
+
+<!--    {% if post.current_candidatures == post.max_candidatures %}-->
+
+<!--    {% if not interview_started %}-->
+
+<!--    <a-->
+<!--            href="{% url 'interview_panel' post.id %}"-->
+<!--            class="btn btn-warning"-->
+<!--    >-->
+<!--        🚀 Start Technical Interview-->
+<!--    </a>-->
+
+<!--    {% else %}-->
+
+<!--    <a-->
+<!--            href="{% url 'interview_panel' post.id %}"-->
+<!--            class="btn"-->
+<!--    >-->
+<!--        👁 View Interview Panel-->
+<!--    </a>-->
+
+<!--    {% endif %}-->
+
+<!--    {% else %}-->
+
+<!--    <p class="danger">-->
+<!--        Interview locked (wait full applications)-->
+<!--    </p>-->
+
+<!--    {% endif %}-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; =========================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; CANDIDATE &ndash;&gt;-->
+<!--    &lt;!&ndash; =========================================== &ndash;&gt;-->
+
+<!--    {% if is_candidate %}-->
+
+<!--    {% if already_applied %}-->
+
+<!--    <p class="success">-->
+<!--        ✓ You already applied to this job-->
+<!--    </p>-->
+
+<!--    {% elif post.current_candidatures >= post.max_candidatures %}-->
+
+<!--    <p class="danger">-->
+<!--        Maximum candidatures reached-->
+<!--    </p>-->
+
+<!--    {% else %}-->
+
+<!--    <a-->
+<!--            class="btn"-->
+<!--            href="{% url 'apply_to_post' post.id %}"-->
+<!--    >-->
+<!--        Postuler-->
+<!--    </a>-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; ======================================= &ndash;&gt;-->
+<!--    &lt;!&ndash; QUIZ SECTION &ndash;&gt;-->
+<!--    &lt;!&ndash; ======================================= &ndash;&gt;-->
+
+<!--    {% if can_take_quiz %}-->
+
+<!--    <div class="quiz-box">-->
+
+<!--        <h3>-->
+<!--            🧠 Technical Quiz Available-->
+<!--        </h3>-->
+
+<!--        <p>-->
+<!--            You must answer quizzes related to:-->
+<!--        </p>-->
+
+<!--        {% for skill in skills_list %}-->
+
+<!--        <span class="badge">-->
+<!--                {{ skill }}-->
+<!--            </span>-->
+
+<!--        {% endfor %}-->
+
+<!--        <br><br>-->
+<!--        {% if interview_started %}-->
+<!--        <p class="danger">-->
+<!--            Interview already Taken : {{ canditature_tried_Score }} .-->
+<!--        </p>-->
+<!--        {% if interview_open %}-->
+<!--        <p class="danger">-->
+<!--            You Can Retake it here-->
+<!--        </p>-->
+<!--        {% else %}-->
+<!--        <p class="danger">-->
+<!--            Interview Closed-->
+<!--        </p>-->
+<!--        {% endif %}-->
+<!--        {% endif %}-->
+<!--        {% if interview_open %}-->
+
+<!--        <a-->
+<!--                class="btn btn-warning"-->
+<!--                href="{% url 'start_quiz' post.id %}"-->
+<!--        >-->
+<!--            🚀 Start Quiz-->
+<!--        </a>-->
+<!--        {% endif %}-->
+
+<!--    </div>-->
+
+<!--    {% endif %}-->
+
+<!--    <br><br>-->
+
+<!--    <a-->
+<!--            href="{% url 'candidate_dashboard' %}"-->
+<!--            class="back"-->
+<!--    >-->
+<!--        Back to Dashboard-->
+<!--    </a>-->
+
+<!--    {% endif %}-->
+
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->

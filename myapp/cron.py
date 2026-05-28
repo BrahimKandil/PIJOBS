@@ -17,7 +17,39 @@ def get_or_create(cursor, table, key_col, key_val, insert_sql, params):
 
     cursor.execute(insert_sql, params)
     return key_val
+import pyodbc
+
+
+def get_or_create(cursor, table, field, value, insert_query, insert_values):
+    """
+    Generic helper for dimension tables
+    """
+
+    cursor.execute(
+        f"SELECT {table.split('_')[1].lower()}_id FROM {table} WHERE {field} = ?",
+        value
+    )
+
+    row = cursor.fetchone()
+
+    if row:
+        return row[0]
+
+    cursor.execute(insert_query, insert_values)
+
+    cursor.execute(
+        f"SELECT {table.split('_')[1].lower()}_id FROM {table} WHERE {field} = ?",
+        value
+    )
+
+    row = cursor.fetchone()
+
+    return row[0] if row else None
+
+
 def run_daily_etl():
+
+    conn = None
 
     try:
         print("Starting Daily ETL...")
@@ -32,12 +64,9 @@ def run_daily_etl():
             "post__recruiter"
         )
 
-        # conn = pyodbc.connect(
-        #     "DRIVER={ODBC Driver 17 for SQL Server};"
-        #     "SERVER=localhost\\SQLEXPRESS;"
-        #     "DATABASE=PI_JoBs;"
-        #     "Trusted_Connection=yes;"
-        # )
+        # ----------------------------
+        # SQL SERVER CONNECTION
+        # ----------------------------
         conn = pyodbc.connect(
             "DRIVER={ODBC Driver 17 for SQL Server};"
             "SERVER=3alinfo-equipepicosoft.database.windows.net;"
@@ -48,89 +77,143 @@ def run_daily_etl():
             "TrustServerCertificate=no;"
             "Connection Timeout=30;"
         )
+
         cursor = conn.cursor()
 
         # ----------------------------
-        # FACT ID
+        # LAST FACT ID
         # ----------------------------
         cursor.execute("SELECT ISNULL(MAX(job_id), 0) FROM Fact_Job")
         last_job_id = cursor.fetchone()[0]
 
+        # ============================
+        # LOOP THROUGH CANDIDATURES
+        # ============================
         for cand in candidatures:
 
-            recruiter_profile = RecruiterProfile.objects.filter(
-                user=cand.post.recruiter
-            ).first()
+            # recruiter is already RecruiterProfile
+            recruiter_profile = cand.post.recruiter
 
-            # ----------------------------
-            # DIM: JOB TITLE
-            # ----------------------------
+            # ============================
+            # DIM JOB TITLE
+            # ============================
             job_title = cand.post.title
 
-            job_title_id = get_or_create(
-                cursor,
-                "Dim_JobTitle",
-                "job_title_short",
-                job_title,
-                """
-                INSERT INTO Dim_JobTitle (job_title_short, job_title)
-                VALUES (?, ?)
-                """,
-                (job_title, job_title)
-            )
-
-            # ----------------------------
-            # DIM: LOCATION
-            # ----------------------------
-            location = recruiter_profile.location if recruiter_profile else None
-
             cursor.execute("""
-                SELECT location_id FROM Dim_Location WHERE job_location = ?
-            """, location)
+                SELECT job_title_id
+                FROM Dim_JobTitle
+                WHERE job_title_short = ?
+            """, (job_title,))
 
             row = cursor.fetchone()
+
+            if row:
+                job_title_id = row[0]
+            else:
+                cursor.execute("""
+                    INSERT INTO Dim_JobTitle (
+                        job_title_short,
+                        job_title
+                    )
+                    VALUES (?, ?)
+                """, (
+                    job_title,
+                    job_title
+                ))
+
+                cursor.execute("""
+                    SELECT job_title_id
+                    FROM Dim_JobTitle
+                    WHERE job_title_short = ?
+                """, (job_title,))
+
+                job_title_id = cursor.fetchone()[0]
+
+            # ============================
+            # DIM LOCATION
+            # ============================
+            location = getattr(recruiter_profile, "location", None)
+
+            cursor.execute("""
+                SELECT location_id
+                FROM Dim_Location
+                WHERE job_location = ?
+            """, (location,))
+
+            row = cursor.fetchone()
+
             if row:
                 location_id = row[0]
             else:
                 cursor.execute("""
-                    INSERT INTO Dim_Location (job_location, search_location, job_country)
+                    INSERT INTO Dim_Location (
+                        job_location,
+                        search_location,
+                        job_country
+                    )
                     VALUES (?, ?, ?)
                 """, (
                     location,
                     location,
-                    recruiter_profile.address if recruiter_profile else None
+                    getattr(recruiter_profile, "address", None)
                 ))
-                location_id = cursor.lastrowid
 
-            # ----------------------------
-            # DIM: COMPANY
-            # ----------------------------
-            company = recruiter_profile.company_name if recruiter_profile else None
+                cursor.execute("""
+                    SELECT location_id
+                    FROM Dim_Location
+                    WHERE job_location = ?
+                """, (location,))
+
+                location_id = cursor.fetchone()[0]
+
+            # ============================
+            # DIM COMPANY
+            # ============================
+            company = getattr(recruiter_profile, "company_name", None)
 
             cursor.execute("""
-                SELECT company_id FROM Dim_Company WHERE company_name = ?
-            """, company)
+                SELECT company_id
+                FROM Dim_Company
+                WHERE company_name = ?
+            """, (company,))
 
             row = cursor.fetchone()
+
             if row:
                 company_id = row[0]
             else:
                 cursor.execute("""
-                    INSERT INTO Dim_Company (company_name, job_health_insurance)
+                    INSERT INTO Dim_Company (
+                        company_name,
+                        job_health_insurance
+                    )
                     VALUES (?, ?)
-                """, (company, False))
-                company_id = cursor.lastrowid
+                """, (
+                    company,
+                    False
+                ))
 
-            # ----------------------------
-            # DIM: JOB TYPE
-            # ----------------------------
+                cursor.execute("""
+                    SELECT company_id
+                    FROM Dim_Company
+                    WHERE company_name = ?
+                """, (company,))
+
+                company_id = cursor.fetchone()[0]
+
+            # ============================
+            # DIM JOB TYPE
+            # ============================
             job_type = cand.post.domain
 
             cursor.execute("""
-                SELECT job_type_id FROM Dim_JobType WHERE job_schedule_type = ?
-            """, job_type)
+                SELECT job_type_id
+                FROM Dim_JobType
+                WHERE job_schedule_type = ?
+            """, (job_type,))
 
             row = cursor.fetchone()
+
             if row:
                 job_type_id = row[0]
             else:
@@ -146,30 +229,49 @@ def run_daily_etl():
                     False,
                     cand.post.required_skills
                 ))
-                job_type_id = cursor.lastrowid
 
-            # ----------------------------
-            # DIM: SKILLS
-            # ----------------------------
+                cursor.execute("""
+                    SELECT job_type_id
+                    FROM Dim_JobType
+                    WHERE job_schedule_type = ?
+                """, (job_type,))
+
+                job_type_id = cursor.fetchone()[0]
+
+            # ============================
+            # DIM SKILLS
+            # ============================
             skills = cand.candidate.skills
 
             cursor.execute("""
-                SELECT skill_id FROM Dim_Skills WHERE job_skills = ?
-            """, skills)
+                SELECT skill_id
+                FROM Dim_Skills
+                WHERE job_skills = ?
+            """, (skills,))
 
             row = cursor.fetchone()
+
             if row:
                 skills_id = row[0]
             else:
                 cursor.execute("""
-                    INSERT INTO Dim_Skills (job_skills)
+                    INSERT INTO Dim_Skills (
+                        job_skills
+                    )
                     VALUES (?)
                 """, (skills,))
-                skills_id = cursor.lastrowid
 
-            # ----------------------------
-            # FACT INSERT
-            # ----------------------------
+                cursor.execute("""
+                    SELECT skill_id
+                    FROM Dim_Skills
+                    WHERE job_skills = ?
+                """, (skills,))
+
+                skills_id = cursor.fetchone()[0]
+
+            # ============================
+            # FACT TABLE INSERT
+            # ============================
             last_job_id += 1
 
             cursor.execute("""
@@ -203,14 +305,33 @@ def run_daily_etl():
                 None
             ))
 
+            print(f"Imported candidature ID: {cand.id}")
+
+        # ============================
+        # COMMIT
+        # ============================
         conn.commit()
 
+        # ============================
+        # UPDATE IMPORT FLAG
+        # ============================
         candidatures.update(imported=True)
 
         print("ETL completed successfully.")
 
     except Exception as e:
-        print("ETL ERROR:", e)
+
+        if conn:
+            conn.rollback()
+
+        print("ETL ERROR:", str(e))
+
+    finally:
+
+        if conn:
+            conn.close()
+
+        print("SQL connection closed.")
 
 from apscheduler.schedulers.background import BackgroundScheduler
 

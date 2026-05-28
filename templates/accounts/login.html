@@ -1,46 +1,241 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Intelligent Recruitment Platform</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
         body{
-            font-family: Arial;
-            background:#f4f6f9;
+            font-family:'Poppins',sans-serif;
+            height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:
+                    linear-gradient(rgba(15,23,42,.75), rgba(15,23,42,.75)),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
         }
-        .box{
-            width:350px;
-            margin:100px auto;
-            background:white;
-            padding:30px;
-            border-radius:10px;
-            box-shadow:0 0 10px rgba(0,0,0,.1);
+
+        .login-container{
+            width:100%;
+            max-width:420px;
+            padding:20px;
         }
+
+        .login-card{
+            background:rgba(255,255,255,0.12);
+            backdrop-filter:blur(14px);
+            border:1px solid rgba(255,255,255,0.2);
+            border-radius:24px;
+            padding:40px;
+            box-shadow:0 10px 40px rgba(0,0,0,0.3);
+            color:white;
+        }
+
+        .logo{
+            width:70px;
+            height:70px;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            border-radius:18px;
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            margin:0 auto 20px;
+            font-size:28px;
+            font-weight:700;
+            color:white;
+            box-shadow:0 5px 20px rgba(59,130,246,.4);
+        }
+
+        h2{
+            text-align:center;
+            font-size:30px;
+            margin-bottom:10px;
+            font-weight:600;
+        }
+
+        .subtitle{
+            text-align:center;
+            font-size:14px;
+            color:rgba(255,255,255,0.8);
+            margin-bottom:35px;
+        }
+
+        form p{
+            margin-bottom:20px;
+        }
+
+        label{
+            display:block;
+            margin-bottom:8px;
+            font-size:14px;
+            font-weight:500;
+            color:white;
+        }
+
         input{
             width:100%;
-            padding:10px;
-            margin:10px 0;
+            padding:14px 16px;
+            border:none;
+            border-radius:14px;
+            outline:none;
+            font-size:15px;
+            background:rgba(255,255,255,0.15);
+            color:white;
+            transition:0.3s ease;
+            border:1px solid transparent;
         }
+
+        input::placeholder{
+            color:rgba(255,255,255,0.7);
+        }
+
+        input:focus{
+            border:1px solid #3b82f6;
+            background:rgba(255,255,255,0.2);
+            box-shadow:0 0 0 4px rgba(59,130,246,.2);
+        }
+
         button{
             width:100%;
-            padding:10px;
-            background:#007bff;
-            color:white;
+            padding:14px;
             border:none;
+            border-radius:14px;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            color:white;
+            font-size:16px;
+            font-weight:600;
+            cursor:pointer;
+            transition:0.3s ease;
+            margin-top:10px;
+            box-shadow:0 8px 20px rgba(59,130,246,.35);
         }
+
+        button:hover{
+            transform:translateY(-2px);
+            box-shadow:0 12px 25px rgba(59,130,246,.45);
+        }
+
+        .footer-text{
+            text-align:center;
+            margin-top:25px;
+            font-size:13px;
+            color:rgba(255,255,255,0.7);
+        }
+
+        .footer-text a{
+            color:#7dd3fc;
+            text-decoration:none;
+            font-weight:500;
+        }
+
+        @media(max-width:480px){
+
+            .login-card{
+                padding:30px 24px;
+            }
+
+            h2{
+                font-size:24px;
+            }
+
+        }
+
     </style>
 </head>
+
 <body>
 
-<div class="box">
-    <h2>Login</h2>
+<div class="login-container">
 
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
+    <div class="login-card">
 
-        <button type="submit">Login</button>
-    </form>
+        <div class="logo">
+            IRP
+        </div>
+
+        <h2>Welcome Back</h2>
+
+        <p class="subtitle">
+            Intelligent Recruitment Platform
+        </p>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">
+                Sign In
+            </button>
+
+        </form>
+
+        <div class="footer-text">
+            Powered by AI Recruitment System
+        </div>
+
+    </div>
+
 </div>
 
 </body>
 </html>
+<!--<!DOCTYPE html>-->
+<!--<html>-->
+<!--<head>-->
+<!--    <title>Login</title>-->
+<!--    <style>-->
+<!--        body{-->
+<!--            font-family: Arial;-->
+<!--            background:#f4f6f9;-->
+<!--        }-->
+<!--        .box{-->
+<!--            width:350px;-->
+<!--            margin:100px auto;-->
+<!--            background:white;-->
+<!--            padding:30px;-->
+<!--            border-radius:10px;-->
+<!--            box-shadow:0 0 10px rgba(0,0,0,.1);-->
+<!--        }-->
+<!--        input{-->
+<!--            width:100%;-->
+<!--            padding:10px;-->
+<!--            margin:10px 0;-->
+<!--        }-->
+<!--        button{-->
+<!--            width:100%;-->
+<!--            padding:10px;-->
+<!--            background:#007bff;-->
+<!--            color:white;-->
+<!--            border:none;-->
+<!--        }-->
+<!--    </style>-->
+<!--</head>-->
+<!--<body>-->
+
+<!--<div class="box">-->
+<!--    <h2>Login</h2>-->
+
+<!--    <form method="post">-->
+<!--        {% csrf_token %}-->
+<!--        {{ form.as_p }}-->
+
+<!--        <button type="submit">Login</button>-->
+<!--    </form>-->
+<!--</div>-->
+
+<!--</body>-->
+<!--</html>-->

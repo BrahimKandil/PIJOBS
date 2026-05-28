@@ -1,2 +1,1698 @@
-<h1>Candidate Dashboard</h1>
-<a href="/logout/">Logout</a>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Candidate Dashboard | IRP</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+
+    <style>
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+        }
+
+        body{
+            font-family:'Poppins',sans-serif;
+            min-height:100vh;
+            background:
+                    linear-gradient(rgba(15,23,42,.85), rgba(15,23,42,.88)),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;
+            background-size:cover;
+            background-position:center;
+            padding:35px 20px;
+            color:white;
+        }
+
+        .container{
+            max-width:1400px;
+            margin:auto;
+        }
+        .hired{
+            color: rgba(0, 128, 0, 0.33);
+        }
+        .accepted{
+            color: blue;
+            font-weight : bold;
+        }
+
+        .rejected{
+            color:#f87171;
+        }
+
+        .pending{
+            color:#facc15;
+        }
+
+        .header{
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            margin-bottom:35px;
+            flex-wrap:wrap;
+        }
+
+        .header-left h1{
+            font-size:38px;
+            font-weight:700;
+            margin-bottom:10px;
+        }
+
+        .header-left p{
+            color:rgba(255,255,255,0.72);
+            font-size:15px;
+        }
+
+        .logout{
+            background:linear-gradient(135deg,#ef4444,#dc2626);
+            color:white;
+            padding:14px 24px;
+            text-decoration:none;
+            border-radius:18px;
+            font-weight:600;
+        }
+
+        /* PROFILE */
+        .profile-card{
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.10);
+            backdrop-filter:blur(14px);
+            border-radius:28px;
+            padding:28px;
+            margin-bottom:30px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:25px;
+        }
+
+        .avatar{
+            width:75px;
+            height:75px;
+            border-radius:24px;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            font-size:28px;
+            font-weight:700;
+        }
+
+        .stats{
+            display:flex;
+            gap:18px;
+            flex-wrap:wrap;
+        }
+
+        .stat{
+            background:rgba(255,255,255,0.05);
+            border:1px solid rgba(255,255,255,0.08);
+            padding:18px 22px;
+            border-radius:20px;
+            min-width:140px;
+        }
+
+        .stat-value{
+            font-size:26px;
+            font-weight:700;
+        }
+
+        /* TABS */
+        .tabs{
+            display:flex;
+            gap:16px;
+            margin-bottom:30px;
+            flex-wrap:wrap;
+        }
+
+        .tab-btn{
+            border:none;
+            padding:15px 24px;
+            border-radius:18px;
+            cursor:pointer;
+            font-weight:600;
+            background:rgba(255,255,255,0.08);
+            color:white;
+        }
+
+        .tab-btn.active{
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+        }
+
+        .tab-content{
+            display:none;
+        }
+
+        .tab-content.active{
+            display:block;
+        }
+
+        /* GRID */
+        .grid{
+            display:grid;
+            grid-template-columns:repeat(auto-fit,minmax(360px,1fr));
+            gap:24px;
+        }
+
+        /* CARD */
+        .card{
+            background:rgba(255,255,255,0.08);
+            border:1px solid rgba(255,255,255,0.10);
+            backdrop-filter:blur(12px);
+            border-radius:28px;
+            padding:26px;
+        }
+
+        .card h3{
+            font-size:22px;
+            margin-bottom:10px;
+        }
+
+        .company{
+            color:rgba(255,255,255,0.70);
+            margin-bottom:15px;
+        }
+
+        .description{
+            font-size:14px;
+            margin-bottom:15px;
+        }
+
+        .badge{
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            padding:6px 12px;
+            border-radius:20px;
+            font-size:12px;
+        }
+
+        .skills{
+            display:flex;
+            flex-wrap:wrap;
+            gap:8px;
+            margin-bottom:15px;
+        }
+
+        .btn{
+            display:inline-block;
+            margin-top:15px;
+            padding:12px 18px;
+            background:linear-gradient(135deg,#3b82f6,#06b6d4);
+            color:white;
+            text-decoration:none;
+            border-radius:14px;
+            font-weight:600;
+        }
+
+        /* LOAD MORE */
+        .load-more{
+            text-align:center;
+            margin-top:30px;
+        }
+
+        .load-btn{
+            padding:14px 22px;
+            border:none;
+            border-radius:16px;
+            background:linear-gradient(135deg,#10b981,#06b6d4);
+            color:white;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="header-left">
+            <h1>Candidate Dashboard</h1>
+            <p>AI-powered job recommendations</p>
+        </div>
+
+        <a href="{% url 'logout' %}" class="logout">Logout</a>
+    </div>
+
+    <!-- PROFILE -->
+    <div class="profile-card">
+        <div style="display: flex; gap: 10px;">
+        <div class="avatar">
+            {{ request.user.username|slice:":1"|upper }}
+        </div>
+        <h2 style="align-content: center;">
+            {{ recruiter.real_name|default:user.username }}
+        </h2>
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                Applications
+                <div class="stat-value">{{ candidatures|length }}</div>
+            </div>
+
+            <div class="stat">
+                Recommendations
+                <div class="stat-value">{{ countingPosts }}</div>
+            </div>
+
+            <div class="stat">
+                Interviews
+                <div class="stat-value">{{ interviews_count }}</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+
+        <button class="tab-btn active" onclick="openTab(event,'recommendations')">
+            Recommended Jobs
+        </button>
+
+        <button class="tab-btn" onclick="openTab(event,'applications')">
+            My Applications
+        </button>
+
+    </div>
+
+    <!-- ===================== -->
+    <!-- RECOMMENDATIONS -->
+    <!-- ===================== -->
+
+    <div id="recommendations" class="tab-content active">
+
+        {% if recommendations %}
+
+        <div class="grid" id="jobGrid">
+
+            {% for item in recommendations %}
+
+            <div class="card">
+
+                <h3>{{ item.post.title }}</h3>
+
+                <div class="company">
+                    {{ item.post.company_name }} • {{ item.post.domain }}
+                </div>
+                <div class="company">
+                    {{ item.score }}
+                </div>
+
+                <div class="description">
+                    {{ item.post.description|truncatewords:35 }}
+                </div>
+
+                <div class="skills">
+
+                    {% for skill in item.post.skills_list %}
+                    <span class="badge">{{ skill }}</span>
+                    {% endfor %}
+
+                </div>
+
+                <a href="{% url 'post_details' item.post.id %}" class="btn">
+                    View Details
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <!-- LOAD MORE -->
+        <div class="load-more">
+            <button id="loadMoreBtn" class="load-btn">
+                Load More Jobs
+            </button>
+        </div>
+
+        {% else %}
+        <div>No recommendations available</div>
+        {% endif %}
+
+    </div>
+
+
+    <!-- APPLICATIONS -->
+    <div id="applications" class="tab-content">
+
+        {% if candidatures %}
+
+        <div class="grid">
+
+            {% for candidature in candidatures %}
+
+            <div class="card">
+
+                <h3>{{ candidature.post.title }}</h3>
+
+                <div class="company">
+                    {{ candidature.post.company_name }}
+                </div>
+
+                <div class="status {% if candidature.hired %} hired {% elif candidature.situation == 'accepted' %} accepted {% elif candidature.situation == 'rejected' %} rejected {% else %} pending {% endif %}" >
+                    {% if candidature.hired %} ✓ Hired
+                    {% elif candidature.situation == 'rejected' %} Rejected
+                    {% elif candidature.situation == 'accepted' %} Accepted
+                    {% else %} Waiting for recruiter decision {% endif %}
+                </div>
+
+                <div class="description">
+                    Score: {{ candidature.quiz_score }}
+                </div>
+
+
+                <a href="{% url 'post_details' candidature.post.id %}" class="btn">
+                    View Details
+                </a>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+<!-- SCRIPT -->
+<script>
+
+    function openTab(event, tabId){
+
+        document.querySelectorAll('.tab-content')
+            .forEach(t => t.classList.remove('active'));
+
+        document.querySelectorAll('.tab-btn')
+            .forEach(b => b.classList.remove('active'));
+
+        document.getElementById(tabId).classList.add('active');
+        event.currentTarget.classList.add('active');
+    }
+
+    /* LOAD MORE LOGIC */
+    let page = 1;
+
+    const btn = document.getElementById("loadMoreBtn");
+    const grid = document.getElementById("jobGrid");
+
+    if(btn){
+
+        btn.addEventListener("click", async () => {
+
+            page++;
+
+            btn.innerText = "Loading...";
+            btn.disabled = true;
+
+            const res = await fetch(`?page=${page}`);
+            const html = await res.text();
+
+            const doc = new DOMParser().parseFromString(html, "text/html");
+
+            const newCards = doc.querySelectorAll("#jobGrid .card");
+
+            if(newCards.length === 0){
+                btn.innerText = "No more jobs";
+                return;
+            }
+
+            newCards.forEach(c => grid.appendChild(c));
+
+            btn.innerText = "Load More Jobs";
+            btn.disabled = false;
+
+        });
+
+    }
+
+</script>
+
+</body>
+</html>
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+
+<!--<head>-->
+
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+
+<!--    <title>Candidate Dashboard | IRP</title>-->
+
+<!--    &lt;!&ndash; GOOGLE FONT &ndash;&gt;-->
+<!--    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"-->
+<!--          rel="stylesheet">-->
+
+<!--    <style>-->
+
+<!--        *{-->
+<!--            margin:0;-->
+<!--            padding:0;-->
+<!--            box-sizing:border-box;-->
+<!--        }-->
+
+<!--        body{-->
+<!--            font-family:'Poppins',sans-serif;-->
+<!--            min-height:100vh;-->
+<!--            background:-->
+<!--                    linear-gradient(rgba(15,23,42,.85), rgba(15,23,42,.88)),-->
+<!--                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat;-->
+<!--            background-size:cover;-->
+<!--            background-position:center;-->
+<!--            padding:35px 20px;-->
+<!--            color:white;-->
+<!--        }-->
+
+<!--        .container{-->
+<!--            max-width:1400px;-->
+<!--            margin:auto;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    HEADER-->
+<!--        =================================== */-->
+
+<!--        .header{-->
+<!--            display:flex;-->
+<!--            justify-content:space-between;-->
+<!--            align-items:center;-->
+<!--            margin-bottom:35px;-->
+<!--            gap:20px;-->
+<!--            flex-wrap:wrap;-->
+<!--        }-->
+
+<!--        .header-left h1{-->
+<!--            font-size:38px;-->
+<!--            font-weight:700;-->
+<!--            margin-bottom:10px;-->
+<!--        }-->
+
+<!--        .header-left p{-->
+<!--            color:rgba(255,255,255,0.72);-->
+<!--            font-size:15px;-->
+<!--        }-->
+
+<!--        .logout{-->
+<!--            background:linear-gradient(135deg,#ef4444,#dc2626);-->
+<!--            color:white;-->
+<!--            padding:14px 24px;-->
+<!--            text-decoration:none;-->
+<!--            border-radius:18px;-->
+<!--            font-weight:600;-->
+<!--            transition:.3s ease;-->
+<!--            box-shadow:0 10px 25px rgba(239,68,68,.25);-->
+<!--        }-->
+
+<!--        .logout:hover{-->
+<!--            transform:translateY(-2px);-->
+<!--            box-shadow:0 14px 30px rgba(239,68,68,.35);-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    TOP PROFILE-->
+<!--        =================================== */-->
+
+<!--        .profile-card{-->
+<!--            background:rgba(255,255,255,0.08);-->
+<!--            border:1px solid rgba(255,255,255,0.10);-->
+<!--            backdrop-filter:blur(14px);-->
+<!--            border-radius:28px;-->
+<!--            padding:28px;-->
+<!--            margin-bottom:30px;-->
+<!--            display:flex;-->
+<!--            justify-content:space-between;-->
+<!--            align-items:center;-->
+<!--            flex-wrap:wrap;-->
+<!--            gap:25px;-->
+<!--        }-->
+
+<!--        .profile-info{-->
+<!--            display:flex;-->
+<!--            align-items:center;-->
+<!--            gap:18px;-->
+<!--        }-->
+
+<!--        .avatar{-->
+<!--            width:75px;-->
+<!--            height:75px;-->
+<!--            border-radius:24px;-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            display:flex;-->
+<!--            align-items:center;-->
+<!--            justify-content:center;-->
+<!--            font-size:28px;-->
+<!--            font-weight:700;-->
+<!--            box-shadow:0 10px 25px rgba(59,130,246,.35);-->
+<!--        }-->
+
+<!--        .profile-text h2{-->
+<!--            font-size:24px;-->
+<!--            margin-bottom:5px;-->
+<!--        }-->
+
+<!--        .profile-text p{-->
+<!--            color:rgba(255,255,255,0.70);-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        .stats{-->
+<!--            display:flex;-->
+<!--            gap:18px;-->
+<!--            flex-wrap:wrap;-->
+<!--        }-->
+
+<!--        .stat{-->
+<!--            background:rgba(255,255,255,0.05);-->
+<!--            border:1px solid rgba(255,255,255,0.08);-->
+<!--            padding:18px 22px;-->
+<!--            border-radius:20px;-->
+<!--            min-width:140px;-->
+<!--        }-->
+
+<!--        .stat h3{-->
+<!--            font-size:13px;-->
+<!--            color:rgba(255,255,255,0.65);-->
+<!--            margin-bottom:8px;-->
+<!--            font-weight:500;-->
+<!--        }-->
+
+<!--        .stat-value{-->
+<!--            font-size:26px;-->
+<!--            font-weight:700;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    MESSAGE-->
+<!--        =================================== */-->
+
+<!--        .message{-->
+<!--            background:rgba(16,185,129,.18);-->
+<!--            border:1px solid rgba(16,185,129,.30);-->
+<!--            padding:16px 20px;-->
+<!--            border-radius:18px;-->
+<!--            margin-bottom:18px;-->
+<!--            color:#d1fae5;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    TABS-->
+<!--        =================================== */-->
+
+<!--        .tabs{-->
+<!--            display:flex;-->
+<!--            gap:16px;-->
+<!--            margin-bottom:30px;-->
+<!--            flex-wrap:wrap;-->
+<!--        }-->
+
+<!--        .tab-btn{-->
+<!--            border:none;-->
+<!--            padding:15px 24px;-->
+<!--            border-radius:18px;-->
+<!--            cursor:pointer;-->
+<!--            font-weight:600;-->
+<!--            font-size:14px;-->
+<!--            transition:.3s ease;-->
+<!--            background:rgba(255,255,255,0.08);-->
+<!--            color:white;-->
+<!--            border:1px solid rgba(255,255,255,0.08);-->
+<!--        }-->
+
+<!--        .tab-btn:hover{-->
+<!--            background:rgba(255,255,255,0.12);-->
+<!--        }-->
+
+<!--        .tab-btn.active{-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            box-shadow:0 10px 25px rgba(59,130,246,.30);-->
+<!--            border:none;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    TAB CONTENT-->
+<!--        =================================== */-->
+
+<!--        .tab-content{-->
+<!--            display:none;-->
+<!--        }-->
+
+<!--        .tab-content.active{-->
+<!--            display:block;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    GRID-->
+<!--        =================================== */-->
+
+<!--        .grid{-->
+<!--            display:grid;-->
+<!--            grid-template-columns:repeat(auto-fit,minmax(360px,1fr));-->
+<!--            gap:24px;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    CARD-->
+<!--        =================================== */-->
+
+<!--        .card{-->
+<!--            background:rgba(255,255,255,0.08);-->
+<!--            border:1px solid rgba(255,255,255,0.10);-->
+<!--            backdrop-filter:blur(12px);-->
+<!--            border-radius:28px;-->
+<!--            padding:26px;-->
+<!--            transition:.3s ease;-->
+<!--            position:relative;-->
+<!--            overflow:hidden;-->
+<!--        }-->
+
+<!--        .card:hover{-->
+<!--            transform:translateY(-4px);-->
+<!--            box-shadow:0 14px 35px rgba(0,0,0,.25);-->
+<!--        }-->
+
+<!--        .card::before{-->
+<!--            content:"";-->
+<!--            position:absolute;-->
+<!--            top:0;-->
+<!--            left:0;-->
+<!--            width:100%;-->
+<!--            height:4px;-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--        }-->
+
+<!--        .card h3{-->
+<!--            font-size:24px;-->
+<!--            margin-bottom:12px;-->
+<!--        }-->
+
+<!--        .company{-->
+<!--            color:rgba(255,255,255,0.70);-->
+<!--            margin-bottom:18px;-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        .description{-->
+<!--            color:rgba(255,255,255,0.82);-->
+<!--            line-height:1.7;-->
+<!--            margin-bottom:18px;-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    BADGES-->
+<!--        =================================== */-->
+
+<!--        .skills{-->
+<!--            margin-bottom:18px;-->
+<!--            display:flex;-->
+<!--            flex-wrap:wrap;-->
+<!--            gap:10px;-->
+<!--        }-->
+
+<!--        .badge{-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            color:white;-->
+<!--            padding:8px 14px;-->
+<!--            border-radius:30px;-->
+<!--            font-size:12px;-->
+<!--            font-weight:500;-->
+<!--            box-shadow:0 8px 20px rgba(59,130,246,.25);-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    SCORE-->
+<!--        =================================== */-->
+
+<!--        .score{-->
+<!--            margin-top:15px;-->
+<!--            font-weight:600;-->
+<!--            color:#4ade80;-->
+<!--            font-size:15px;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    BUTTONS-->
+<!--        =================================== */-->
+
+<!--        .btn{-->
+<!--            display:inline-flex;-->
+<!--            align-items:center;-->
+<!--            justify-content:center;-->
+<!--            gap:10px;-->
+<!--            margin-top:20px;-->
+<!--            padding:14px 20px;-->
+<!--            background:linear-gradient(135deg,#3b82f6,#06b6d4);-->
+<!--            color:white;-->
+<!--            text-decoration:none;-->
+<!--            border-radius:18px;-->
+<!--            font-weight:600;-->
+<!--            transition:.3s ease;-->
+<!--            box-shadow:0 10px 25px rgba(59,130,246,.25);-->
+<!--        }-->
+
+<!--        .btn:hover{-->
+<!--            transform:translateY(-2px);-->
+<!--            box-shadow:0 14px 30px rgba(59,130,246,.35);-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    STATUS-->
+<!--        =================================== */-->
+
+<!--        .status{-->
+<!--            margin-top:18px;-->
+<!--            font-weight:600;-->
+<!--            font-size:15px;-->
+<!--        }-->
+
+<!--        .accepted{-->
+<!--            color:#4ade80;-->
+<!--        }-->
+
+<!--        .rejected{-->
+<!--            color:#f87171;-->
+<!--        }-->
+
+<!--        .pending{-->
+<!--            color:#facc15;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    EMPTY-->
+<!--        =================================== */-->
+
+<!--        .empty{-->
+<!--            background:rgba(255,255,255,0.08);-->
+<!--            border:1px solid rgba(255,255,255,0.10);-->
+<!--            backdrop-filter:blur(12px);-->
+<!--            padding:45px;-->
+<!--            border-radius:28px;-->
+<!--            text-align:center;-->
+<!--            color:rgba(255,255,255,0.72);-->
+<!--            font-size:16px;-->
+<!--        }-->
+
+<!--        /* ===================================-->
+<!--                    RESPONSIVE-->
+<!--        =================================== */-->
+
+<!--        @media(max-width:900px){-->
+
+<!--            .header-left h1{-->
+<!--                font-size:30px;-->
+<!--            }-->
+
+<!--            .profile-card{-->
+<!--                flex-direction:column;-->
+<!--                align-items:flex-start;-->
+<!--            }-->
+
+<!--            .stats{-->
+<!--                width:100%;-->
+<!--            }-->
+
+<!--            .stat{-->
+<!--                flex:1;-->
+<!--            }-->
+
+<!--        }-->
+
+<!--        @media(max-width:600px){-->
+
+<!--            .grid{-->
+<!--                grid-template-columns:1fr;-->
+<!--            }-->
+
+<!--            .header{-->
+<!--                flex-direction:column;-->
+<!--                align-items:flex-start;-->
+<!--            }-->
+
+<!--            .tabs{-->
+<!--                width:100%;-->
+<!--            }-->
+
+<!--            .tab-btn{-->
+<!--                flex:1;-->
+<!--                text-align:center;-->
+<!--            }-->
+
+<!--        }-->
+
+<!--    </style>-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="container">-->
+
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; HEADER &ndash;&gt;-->
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--    <div class="header">-->
+
+<!--        <div class="header-left">-->
+
+<!--            <h1>-->
+<!--                Candidate Dashboard-->
+<!--            </h1>-->
+
+<!--            <p>-->
+<!--                Explore AI-powered job recommendations and track your applications-->
+<!--            </p>-->
+
+<!--        </div>-->
+
+<!--        <a-->
+<!--                href="/logout/"-->
+<!--                class="logout"-->
+<!--        >-->
+<!--            Logout-->
+<!--        </a>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; PROFILE CARD &ndash;&gt;-->
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--    <div class="profile-card">-->
+
+<!--        <div class="profile-info">-->
+
+<!--            <div class="avatar">-->
+<!--                {{ request.user.username|slice:":1"|upper }}-->
+<!--            </div>-->
+
+<!--            <div class="profile-text">-->
+
+<!--                <h2>-->
+<!--                    {{ request.user.username }}-->
+<!--                </h2>-->
+
+<!--                <p>-->
+<!--                    {{ request.user.email }}-->
+<!--                </p>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+<!--        <div class="stats">-->
+
+<!--            <div class="stat">-->
+
+<!--                <h3>-->
+<!--                    Applications-->
+<!--                </h3>-->
+
+<!--                <div class="stat-value">-->
+<!--                    {{ candidatures|length }}-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+<!--            <div class="stat">-->
+
+<!--                <h3>-->
+<!--                    Recommendations-->
+<!--                </h3>-->
+
+<!--                <div class="stat-value">-->
+<!--                    {{ recommendations|length }}-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+<!--            <div class="stat">-->
+
+<!--                <h3>-->
+<!--                    Interviews-->
+<!--                </h3>-->
+
+<!--                <div class="stat-value">-->
+<!--                    {{ interviews_count }}-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; MESSAGES &ndash;&gt;-->
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--    {% if messages %}-->
+
+<!--    {% for message in messages %}-->
+
+<!--    <div class="message">-->
+<!--        {{ message }}-->
+<!--    </div>-->
+
+<!--    {% endfor %}-->
+
+<!--    {% endif %}-->
+
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; TABS &ndash;&gt;-->
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--    <div class="tabs">-->
+
+<!--        <button-->
+<!--                class="tab-btn active"-->
+<!--                onclick="openTab(event,'recommendations')"-->
+<!--        >-->
+<!--            Recommended Jobs-->
+<!--        </button>-->
+
+<!--        <button-->
+<!--                class="tab-btn"-->
+<!--                onclick="openTab(event,'applications')"-->
+<!--        >-->
+<!--            My Applications-->
+<!--        </button>-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; RECOMMENDATIONS &ndash;&gt;-->
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--    <div-->
+<!--            id="recommendations"-->
+<!--            class="tab-content active"-->
+<!--    >-->
+
+<!--        {% if recommendations %}-->
+
+<!--        <div class="grid">-->
+
+<!--            {% for item in recommendations %}-->
+
+<!--            <div class="card">-->
+
+<!--                <h3>-->
+<!--                    {{ item.post.title }}-->
+<!--                </h3>-->
+
+<!--                <div class="company">-->
+<!--                    {{ item.post.company_name }}-->
+<!--                    •-->
+<!--                    {{ item.post.domain }}-->
+<!--                </div>-->
+
+<!--                <div class="description">-->
+<!--                    {{ item.post.description|truncatewords:35 }}-->
+<!--                </div>-->
+
+<!--                <div class="skills">-->
+
+<!--                    {% for skill in item.post.skills_list %}-->
+
+<!--                    <span class="badge">-->
+<!--                        {{ skill }}-->
+<!--                    </span>-->
+
+<!--                    {% endfor %}-->
+
+<!--                </div>-->
+
+<!--                <div class="score">-->
+
+<!--                    AI Matching Score :-->
+<!--                    {{ item.score|floatformat:2 }}-->
+
+<!--                </div>-->
+
+<!--                <a-->
+<!--                        href="{% url 'post_details' item.post.id %}"-->
+<!--                        class="btn"-->
+<!--                >-->
+<!--                    View Details-->
+<!--                </a>-->
+
+<!--            </div>-->
+
+<!--            {% endfor %}-->
+
+<!--        </div>-->
+
+<!--        {% else %}-->
+
+<!--        <div class="empty">-->
+<!--            No recommendations available.-->
+<!--        </div>-->
+
+<!--        {% endif %}-->
+
+<!--    </div>-->
+
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--    &lt;!&ndash; APPLICATIONS &ndash;&gt;-->
+<!--    &lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--    <div-->
+<!--            id="applications"-->
+<!--            class="tab-content"-->
+<!--    >-->
+
+<!--        {% if candidatures %}-->
+
+<!--        <div class="grid">-->
+
+<!--            {% for candidature in candidatures %}-->
+
+<!--            <div class="card">-->
+
+<!--                <h3>-->
+<!--                    {{ candidature.post.title }}-->
+<!--                </h3>-->
+
+<!--                <div class="company">-->
+<!--                    {{ candidature.post.company_name }}-->
+<!--                    •-->
+<!--                    {{ candidature.post.domain }}-->
+<!--                </div>-->
+
+<!--                <p style="margin-bottom:12px; color:rgba(255,255,255,.75);">-->
+
+<!--                    <strong>-->
+<!--                        Applied at:-->
+<!--                    </strong>-->
+
+<!--                    {{ candidature.date_of_post }}-->
+
+<!--                </p>-->
+
+<!--                <p style="margin-bottom:12px; color:rgba(255,255,255,.75);">-->
+
+<!--                    <strong>-->
+<!--                        Quiz Score:-->
+<!--                    </strong>-->
+
+<!--                    {{ candidature.quiz_score }}-->
+
+<!--                </p>-->
+
+<!--                <div-->
+<!--                        class="status-->
+<!--                        {% if candidature.hired %}-->
+<!--                            accepted-->
+<!--                        {% elif candidature.situation == 'rejected' %}-->
+<!--                            rejected-->
+<!--                        {% else %}-->
+<!--                            pending-->
+<!--                        {% endif %}"-->
+<!--                >-->
+
+<!--                    {% if candidature.hired %}-->
+
+<!--                    ✓ Hired-->
+
+<!--                    {% elif candidature.situation == 'rejected' %}-->
+
+<!--                    Rejected-->
+
+<!--                    {% else %}-->
+
+<!--                    Waiting for recruiter decision-->
+
+<!--                    {% endif %}-->
+
+<!--                </div>-->
+
+<!--                {% if candidature.salary %}-->
+
+<!--                <p style="margin-top:14px; color:rgba(255,255,255,.75);">-->
+
+<!--                    <strong>-->
+<!--                        Salary:-->
+<!--                    </strong>-->
+
+<!--                    {{ candidature.salary }}-->
+
+<!--                </p>-->
+
+<!--                {% endif %}-->
+
+<!--                <a-->
+<!--                        href="{% url 'post_details' candidature.post.id %}"-->
+<!--                        class="btn"-->
+<!--                >-->
+<!--                    View Details-->
+<!--                </a>-->
+
+<!--            </div>-->
+
+<!--            {% endfor %}-->
+
+<!--        </div>-->
+
+<!--        {% else %}-->
+
+<!--        <div class="empty">-->
+<!--            You have not applied to any jobs yet.-->
+<!--        </div>-->
+
+<!--        {% endif %}-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
+<!--<script>-->
+
+<!--    function openTab(event, tabId){-->
+
+<!--        const tabs =-->
+<!--            document.querySelectorAll('.tab-content');-->
+
+<!--        tabs.forEach(tab => {-->
+<!--            tab.classList.remove('active');-->
+<!--        });-->
+
+<!--        const buttons =-->
+<!--            document.querySelectorAll('.tab-btn');-->
+
+<!--        buttons.forEach(btn => {-->
+<!--            btn.classList.remove('active');-->
+<!--        });-->
+
+<!--        document-->
+<!--            .getElementById(tabId)-->
+<!--            .classList-->
+<!--            .add('active');-->
+
+<!--        event.currentTarget-->
+<!--            .classList-->
+<!--            .add('active');-->
+<!--    }-->
+
+<!--</script>-->
+
+<!--</body>-->
+
+<!--</html>-->
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+
+<!--<head>-->
+
+<!--    <meta charset="UTF-8">-->
+
+<!--    <title>-->
+<!--        Candidate Dashboard-->
+<!--    </title>-->
+
+<!--    <style>-->
+
+<!--        *{-->
+<!--            margin:0;-->
+<!--            padding:0;-->
+<!--            box-sizing:border-box;-->
+<!--        }-->
+
+<!--        body{-->
+<!--            font-family:Arial, sans-serif;-->
+<!--            background:#f4f6f9;-->
+<!--            padding:30px;-->
+<!--        }-->
+
+<!--        .header{-->
+<!--            display:flex;-->
+<!--            justify-content:space-between;-->
+<!--            align-items:center;-->
+<!--            margin-bottom:30px;-->
+<!--        }-->
+
+<!--        .header h1{-->
+<!--            color:#1877f2;-->
+<!--        }-->
+
+<!--        .logout{-->
+<!--            background:#dc3545;-->
+<!--            color:white;-->
+<!--            padding:10px 18px;-->
+<!--            text-decoration:none;-->
+<!--            border-radius:6px;-->
+<!--        }-->
+
+<!--        .tabs{-->
+<!--            display:flex;-->
+<!--            gap:15px;-->
+<!--            margin-bottom:25px;-->
+<!--        }-->
+
+<!--        .tab-btn{-->
+<!--            padding:12px 20px;-->
+<!--            border:none;-->
+<!--            border-radius:8px;-->
+<!--            cursor:pointer;-->
+<!--            background:#dfe3e8;-->
+<!--            font-weight:bold;-->
+<!--        }-->
+
+<!--        .tab-btn.active{-->
+<!--            background:#1877f2;-->
+<!--            color:white;-->
+<!--        }-->
+
+<!--        .tab-content{-->
+<!--            display:none;-->
+<!--        }-->
+
+<!--        .tab-content.active{-->
+<!--            display:block;-->
+<!--        }-->
+
+<!--        .grid{-->
+<!--            display:grid;-->
+<!--            grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));-->
+<!--            gap:20px;-->
+<!--        }-->
+
+<!--        .card{-->
+<!--            background:white;-->
+<!--            border-radius:12px;-->
+<!--            padding:20px;-->
+<!--            box-shadow:0 2px 10px rgba(0,0,0,0.08);-->
+<!--        }-->
+
+<!--        .card h3{-->
+<!--            color:#1877f2;-->
+<!--            margin-bottom:10px;-->
+<!--        }-->
+
+<!--        .company{-->
+<!--            color:#666;-->
+<!--            margin-bottom:15px;-->
+<!--        }-->
+
+<!--        .description{-->
+<!--            margin-bottom:15px;-->
+<!--            line-height:1.5;-->
+<!--        }-->
+
+<!--        .skills{-->
+<!--            margin-bottom:15px;-->
+<!--        }-->
+
+<!--        .badge{-->
+<!--            display:inline-block;-->
+<!--            background:#e4e6eb;-->
+<!--            padding:6px 12px;-->
+<!--            border-radius:20px;-->
+<!--            margin:4px;-->
+<!--            font-size:14px;-->
+<!--        }-->
+
+<!--        .score{-->
+<!--            margin-top:10px;-->
+<!--            font-weight:bold;-->
+<!--            color:#28a745;-->
+<!--        }-->
+
+<!--        .btn{-->
+<!--            display:inline-block;-->
+<!--            margin-top:15px;-->
+<!--            padding:10px 16px;-->
+<!--            background:#1877f2;-->
+<!--            color:white;-->
+<!--            text-decoration:none;-->
+<!--            border-radius:6px;-->
+<!--        }-->
+
+<!--        .status{-->
+<!--            margin-top:15px;-->
+<!--            font-weight:bold;-->
+<!--        }-->
+
+<!--        .accepted{-->
+<!--            color:green;-->
+<!--        }-->
+
+<!--        .rejected{-->
+<!--            color:red;-->
+<!--        }-->
+
+<!--        .pending{-->
+<!--            color:orange;-->
+<!--        }-->
+
+<!--        .empty{-->
+<!--            background:white;-->
+<!--            padding:25px;-->
+<!--            border-radius:10px;-->
+<!--            text-align:center;-->
+<!--            color:#666;-->
+<!--        }-->
+
+<!--        .message{-->
+<!--            background:#d4edda;-->
+<!--            padding:12px;-->
+<!--            border-radius:6px;-->
+<!--            margin-bottom:15px;-->
+<!--        }-->
+
+<!--    </style>-->
+
+<!--</head>-->
+
+<!--<body>-->
+
+<!--<div class="header">-->
+
+<!--    <h1>-->
+<!--        Candidate Dashboard-->
+<!--    </h1>-->
+
+<!--    <a-->
+<!--            href="/logout/"-->
+<!--            class="logout"-->
+<!--    >-->
+<!--        Logout-->
+<!--    </a>-->
+
+<!--</div>-->
+
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--&lt;!&ndash; MESSAGES &ndash;&gt;-->
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--{% if messages %}-->
+
+<!--{% for message in messages %}-->
+
+<!--<div class="message">-->
+<!--    {{ message }}-->
+<!--</div>-->
+
+<!--{% endfor %}-->
+
+<!--{% endif %}-->
+
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--&lt;!&ndash; TABS &ndash;&gt;-->
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--<div class="tabs">-->
+
+<!--    <button-->
+<!--            class="tab-btn active"-->
+<!--            onclick="openTab('recommendations')"-->
+<!--    >-->
+<!--        Recommended Jobs-->
+<!--    </button>-->
+
+<!--    <button-->
+<!--            class="tab-btn"-->
+<!--            onclick="openTab('applications')"-->
+<!--    >-->
+<!--        My Applications-->
+<!--    </button>-->
+
+<!--</div>-->
+
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--&lt;!&ndash; RECOMMENDATIONS &ndash;&gt;-->
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--<div-->
+<!--        id="recommendations"-->
+<!--        class="tab-content active"-->
+<!--&gt;-->
+
+<!--    {% if recommendations %}-->
+
+<!--    <div class="grid">-->
+
+<!--        {% for item in recommendations %}-->
+
+<!--        <div class="card">-->
+
+<!--            <h3>-->
+<!--                {{ item.post.title }}-->
+<!--            </h3>-->
+
+<!--            <div class="company">-->
+<!--                {{ item.post.company_name }}-->
+<!--                •-->
+<!--                {{ item.post.domain }}-->
+<!--            </div>-->
+
+<!--            <div class="description">-->
+<!--                {{ item.post.description }}-->
+<!--            </div>-->
+
+<!--            <div class="skills">-->
+
+<!--                {% for skill in item.post.skills_list %}-->
+
+<!--                <span class="badge">-->
+<!--                    {{ skill }}-->
+<!--                </span>-->
+
+<!--                {% endfor %}-->
+
+<!--            </div>-->
+
+<!--            <div class="score">-->
+
+<!--                AI Matching Score :-->
+<!--                {{ item.score|floatformat:2 }}-->
+
+<!--            </div>-->
+
+<!--            <a-->
+<!--                    href="{% url 'post_details' item.post.id %}"-->
+<!--                    class="btn"-->
+<!--            >-->
+<!--                Voir fiche technique-->
+<!--            </a>-->
+
+<!--        </div>-->
+
+<!--        {% endfor %}-->
+
+<!--    </div>-->
+
+<!--    {% else %}-->
+
+<!--    <div class="empty">-->
+<!--        No recommendations available.-->
+<!--    </div>-->
+
+<!--    {% endif %}-->
+
+<!--</div>-->
+
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+<!--&lt;!&ndash; APPLICATIONS &ndash;&gt;-->
+<!--&lt;!&ndash; ===================================== &ndash;&gt;-->
+
+<!--<div-->
+<!--        id="applications"-->
+<!--        class="tab-content"-->
+<!--&gt;-->
+
+<!--    {% if candidatures %}-->
+
+<!--    <div class="grid">-->
+
+<!--        {% for candidature in candidatures %}-->
+
+<!--        <div class="card">-->
+
+<!--            <h3>-->
+<!--                {{ candidature.post.title }}-->
+<!--            </h3>-->
+
+<!--            <div class="company">-->
+<!--                {{ candidature.post.company_name }}-->
+<!--                •-->
+<!--                {{ candidature.post.domain }}-->
+<!--            </div>-->
+
+<!--            <p>-->
+<!--                <strong>-->
+<!--                    Applied at:-->
+<!--                </strong>-->
+
+<!--                {{ candidature.date_of_post }}-->
+<!--            </p>-->
+
+<!--            <p style="margin-top:10px;">-->
+<!--                <strong>-->
+<!--                    Quiz Score:-->
+<!--                </strong>-->
+
+<!--                {{ candidature.quiz_score }}-->
+<!--            </p>-->
+
+<!--            <div-->
+<!--                    class="status-->
+<!--                    {% if candidature.hired %}-->
+<!--                        accepted-->
+<!--                    {% elif candidature.situation == 'rejected' %}-->
+<!--                        rejected-->
+<!--                    {% else %}-->
+<!--                        pending-->
+<!--                    {% endif %}"-->
+<!--            >-->
+
+<!--                {% if candidature.hired %}-->
+
+<!--                ✓ Hired-->
+
+<!--                {% elif candidature.situation == 'rejected' %}-->
+
+<!--                Rejected-->
+
+<!--                {% else %}-->
+
+<!--                Waiting for recruiter decision-->
+
+<!--                {% endif %}-->
+
+<!--            </div>-->
+
+<!--            {% if candidature.salary %}-->
+
+<!--            <p style="margin-top:10px;">-->
+
+<!--                <strong>-->
+<!--                    Salary:-->
+<!--                </strong>-->
+
+<!--                {{ candidature.salary }}-->
+
+<!--            </p>-->
+
+<!--            {% endif %}-->
+
+<!--            <a-->
+<!--                    href="{% url 'post_details' candidature.post.id %}"-->
+<!--                    class="btn"-->
+<!--            >-->
+<!--                View Details-->
+<!--            </a>-->
+
+<!--        </div>-->
+
+<!--        {% endfor %}-->
+
+<!--    </div>-->
+
+<!--    {% else %}-->
+
+<!--    <div class="empty">-->
+<!--        You have not applied to any jobs yet.-->
+<!--    </div>-->
+
+<!--    {% endif %}-->
+
+<!--</div>-->
+
+<!--<script>-->
+
+<!--    function openTab(tabId){-->
+
+<!--        const tabs =-->
+<!--            document.querySelectorAll('.tab-content');-->
+
+<!--        tabs.forEach(tab => {-->
+<!--            tab.classList.remove('active');-->
+<!--        });-->
+
+<!--        const buttons =-->
+<!--            document.querySelectorAll('.tab-btn');-->
+
+<!--        buttons.forEach(btn => {-->
+<!--            btn.classList.remove('active');-->
+<!--        });-->
+
+<!--        document-->
+<!--            .getElementById(tabId)-->
+<!--            .classList-->
+<!--            .add('active');-->
+
+<!--        event.target-->
+<!--            .classList-->
+<!--            .add('active');-->
+<!--    }-->
+
+<!--</script>-->
+
+<!--</body>-->
+
+<!--</html>-->
+<!--<h1>Candidate Dashboard</h1>-->
+
+<!--<a href="/logout/">Logout</a>-->
+
+<!--<hr>-->
+
+<!--<h2>Recommended Jobs</h2>-->
+
+<!--{% if messages %}-->
+<!--{% for message in messages %}-->
+<!--<div style="padding:10px;background:#d4edda;margin:10px 0;">-->
+<!--    {{ message }}-->
+<!--</div>-->
+<!--{% endfor %}-->
+<!--{% endif %}-->
+
+<!--{% for item in recommendations %}-->
+
+<!--<div style="border:1px solid #ccc;padding:15px;margin:15px;">-->
+
+<!--    <h3>{{ item.post.title }}</h3>-->
+
+<!--    <p><strong>Company:</strong> {{ item.post.company_name }}</p>-->
+<!--    <p><strong>Domain:</strong> {{ item.post.domain }}</p>-->
+<!--    <p>{{ item.post.description }}</p>-->
+<!--    <p><strong>Skills:</strong> {{ item.post.required_skills }}</p>-->
+
+<!--    <p>-->
+<!--        <strong>AI Score:</strong>-->
+<!--        {{ item.score|floatformat:2 }}-->
+<!--    </p>-->
+
+<!--    &lt;!&ndash; VIEW FICHE TECHNIQUE &ndash;&gt;-->
+<!--    <a href="{% url 'post_details' item.post.id %}"-->
+<!--       style="display:inline-block;padding:10px 15px;background:#1877f2;color:white;border-radius:6px;text-decoration:none;">-->
+<!--        Voir fiche technique-->
+<!--    </a>-->
+
+<!--</div>-->
+
+<!--{% empty %}-->
+<!--<p>No recommendations available.</p>-->
+<!--{% endfor %}-->
