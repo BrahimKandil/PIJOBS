@@ -8,38 +8,57 @@ ENV PYTHONUNBUFFERED=1
 # Set work directory
 WORKDIR /app
 
-# Install system dependencies (IMPORTANT for pyodbc)
+# =========================
+# SYSTEM DEPENDENCIES
+# =========================
 RUN apt-get update && apt-get install -y \
     curl \
     gnupg2 \
+    ca-certificates \
     apt-transport-https \
+    gcc \
+    g++ \
     unixodbc \
-    unixodbc-dev
+    unixodbc-dev \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
-    && mv microsoft.gpg /etc/apt/trusted.gpg.d/
+# =========================
+# MICROSOFT ODBC DRIVER (FIXED MODERN WAY)
+# =========================
 
-RUN curl -sSL https://packages.microsoft.com/config/debian/12/prod.list \
+RUN mkdir -p /etc/apt/keyrings
+
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc \
+    | gpg --dearmor > /etc/apt/keyrings/microsoft.gpg
+
+RUN echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/microsoft.gpg] https://packages.microsoft.com/debian/12/prod bookworm main" \
     > /etc/apt/sources.list.d/mssql-release.list
 
-RUN apt-get update \
-    && ACCEPT_EULA=Y apt-get install -y msodbcsql18
+RUN apt-get update && ACCEPT_EULA=Y apt-get install -y msodbcsql18 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
+# =========================
+# PYTHON DEPENDENCIES
+# =========================
 COPY requirements.txt .
 
-# Install Python dependencies
 RUN pip install --upgrade pip && \
     pip install -r requirements.txt
 
-# Copy project files
+# =========================
+# PROJECT FILES
+# =========================
 COPY . .
 
-# Collect static files (safe for production)
+# Collect static files (safe fallback)
 RUN python manage.py collectstatic --noinput || true
 
-# Expose port
+# =========================
+# EXPOSE PORT
+# =========================
 EXPOSE 8000
 
-# Start Django using production server
+# =========================
+# START COMMAND
+# =========================
 CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
