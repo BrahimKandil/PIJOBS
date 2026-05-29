@@ -10,21 +10,20 @@ WORKDIR /app
 
 # Install system dependencies (IMPORTANT for pyodbc)
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
     curl \
     gnupg2 \
-    unixodbc \
-    unixodbc-dev \
     apt-transport-https \
-    && rm -rf /var/lib/apt/lists/*
+    unixodbc \
+    unixodbc-dev
 
-# Install Microsoft ODBC Driver (for SQL Server / Azure SQL)
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    curl https://packages.microsoft.com/config/debian/12/prod.list \
-    > /etc/apt/sources.list.d/mssql-release.list && \
-    apt-get update && \
-    ACCEPT_EULA=Y apt-get install -y msodbcsql18
+RUN curl -sSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg \
+    && mv microsoft.gpg /etc/apt/trusted.gpg.d/
+
+RUN curl -sSL https://packages.microsoft.com/config/debian/12/prod.list \
+    > /etc/apt/sources.list.d/mssql-release.list
+
+RUN apt-get update \
+    && ACCEPT_EULA=Y apt-get install -y msodbcsql18
 
 # Copy requirements
 COPY requirements.txt .
