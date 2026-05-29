@@ -50,9 +50,6 @@ RUN pip install --upgrade pip && \
 # =========================
 COPY . .
 
-# Collect static files (safe fallback)
-RUN python manage.py collectstatic --noinput || true
-
 # =========================
 # EXPOSE PORT
 # =========================
