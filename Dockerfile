@@ -1,5 +1,5 @@
-# Base Python image (Downgraded to 3.11 to ensure binary wheels exist for your heavy ML stack)
-FROM python:3.11-slim
+# Base Python image set exactly to your local version
+FROM python:3.13-slim
 
 # Prevent Python from writing .pyc files
 ENV PYTHONDONTWRITEBYTECODE=1
@@ -9,7 +9,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 # =========================
-# SYSTEM DEPENDENCIES
+# SYSTEM DEPENDENCIES (With Rust & Cargo for Python 3.13)
 # =========================
 RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     g++ \
     unixodbc \
     unixodbc-dev \
+    curl \
+    # We add these two explicitly so Python 3.13 can compile python-bidi and other source files
     cargo \
     rustc \
     && rm -rf /var/lib/apt/lists/*
@@ -44,6 +46,7 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y --no-install-recommends m
 # DOWNLOAD ML MODELS
 # =========================
 RUN mkdir -p /app/ml_models
+
 # Install gdown to bypass Google Drive's virus scan confirmation page safely
 RUN pip install --no-cache-dir gdown
 
