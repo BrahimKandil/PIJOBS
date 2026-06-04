@@ -44,11 +44,11 @@ RUN apt-get update && ACCEPT_EULA=Y apt-get install -y --no-install-recommends m
 # DOWNLOAD ML MODELS
 # =========================
 RUN mkdir -p /app/ml_models
+# Install gdown to bypass Google Drive's virus scan confirmation page safely
+RUN pip install --no-cache-dir gdown
 
-# Download ZIP from Google Drive
-RUN wget --no-check-certificate \
-    "https://drive.google.com/uc?export=download&id=1vXtOXOE7MHF2BGvNYpNBAz8oz5zf3gBJ" \
-    -O /tmp/models.zip
+# Download using gdown via the file ID directly
+RUN gdown 1vXtOXOE7MHF2BGvNYpNBAz8oz5zf3gBJ -O /tmp/models.zip
 
 # Unzip into ml_models directory
 RUN unzip /tmp/models.zip -d /app/ml_models && \
