@@ -1,0 +1,83 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+<h2>Candidatures reçues pour : {{ post.title }}</h2>
+
+<h3>Candidatures en attente / triées par pertinence</h3>
+<table>
+    <tr>
+        <th>Candidat</th>
+        <th>Email</th>
+        <th>Téléphone</th>
+        <th>Expérience</th>
+        <th>Score IA</th>
+        <th>Suggestion IA</th>
+        <th>Source</th>
+        <th>Actions</th>
+    </tr>
+    {% for item in pending %}
+    <tr>
+        <td>{{ item.full_name|default:item.candidate.user.real_name }}</td>
+        <td>{{ item.email }}</td>
+        <td>{{ item.phone }}</td>
+        <td>{{ item.years_of_experience|default:"-" }}</td>
+        <td class="score-box">{{ item.ai_score|default:"-" }}</td>
+        <td>
+            {% if item.ai_recommendation == "recommend_accept" %}
+                <span class="badge badge-green">À accepter</span>
+            {% elif item.ai_recommendation == "borderline" %}
+                <span class="badge badge-orange">À examiner</span>
+            {% elif item.ai_recommendation == "recommend_reject" %}
+                <span class="badge badge-red">À refuser</span>
+            {% else %}
+                -
+            {% endif %}
+        </td>
+        <td>{{ item.ai_source|default:"-" }}</td>
+        <td>
+            <form method="post" action="{% url 'recruiter_accept' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-success">Accepter</button>
+            </form>
+
+            <form method="post" action="{% url 'recruiter_reject' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <input type="text" name="reason" placeholder="Motif du refus">
+                <button type="submit" class="btn btn-danger">Refuser</button>
+            </form>
+
+            <form method="post" action="{% url 'recruiter_reanalyze' item.id %}" style="display:inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-secondary">🔄 Reanalyser IA</button>
+            </form>
+        </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="8">Aucune candidature en cours.</td></tr>
+    {% endfor %}
+</table>
+
+<h3>Candidatures refusées</h3>
+<table>
+    <tr>
+        <th>Candidat</th>
+        <th>Score IA</th>
+        <th>Suggestion IA</th>
+        <th>Auto refus</th>
+        <th>Motif</th>
+        <th>Date</th>
+    </tr>
+    {% for item in rejected %}
+    <tr>
+        <td>{{ item.full_name|default:item.candidate.user.real_name }}</td>
+        <td>{{ item.ai_score|default:"-" }}</td>
+        <td>{{ item.ai_recommendation|default:"-" }}</td>
+        <td>{% if item.auto_rejected %}Oui{% else %}Non{% endif %}</td>
+        <td>{{ item.rejection_reason|default:"-" }}</td>
+        <td>{{ item.rejected_at }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Aucune candidature refusée.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "accounts/base.html" %}
+
+{% block content %}
+<h2>Mes candidatures</h2>
+
+<h3>Candidatures en cours / acceptées</h3>
+<table>
+    <tr>
+        <th>Poste</th>
+        <th>Entreprise</th>
+        <th>Statut</th>
+        <th>Score IA</th>
+        <th>Suggestion IA</th>
+    </tr>
+    {% for item in accepted %}
+    <tr>
+        <td>{{ item.post.title }}</td>
+        <td>{{ item.post.company_name }}</td>
+        <td>{{ item.situation }}</td>
+        <td>{{ item.ai_score|default:"-" }}</td>
+        <td>{{ item.ai_recommendation|default:"-" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aucune candidature.</td></tr>
+    {% endfor %}
+</table>
+
+<h3>Candidatures refusées</h3>
+<table>
+    <tr>
+        <th>Poste</th>
+        <th>Entreprise</th>
+        <th>Score IA</th>
+        <th>Suggestion IA</th>
+        <th>Auto refus</th>
+        <th>Motif</th>
+    </tr>
+    {% for item in rejected %}
+    <tr>
+        <td>{{ item.post.title }}</td>
+        <td>{{ item.post.company_name }}</td>
+        <td>{{ item.ai_score|default:"-" }}</td>
+        <td>{{ item.ai_recommendation|default:"-" }}</td>
+        <td>{% if item.auto_rejected %}Oui{% else %}Non{% endif %}</td>
+        <td>{{ item.rejection_reason|default:"-" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Aucune candidature refusée.</td></tr>
+    {% endfor %}
+</table>
+{% endblock %}
